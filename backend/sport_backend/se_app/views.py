@@ -6,10 +6,14 @@ from rest_framework.response import Response
 from rest_framework import status, exceptions
 from django.http import HttpResponse
 from django.contrib.auth.signals import user_logged_in
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny,IsAuthenticated
 from sport_backend import settings
+from django.http import FileResponse
 import os
 from PIL import Image
+import argparse
+from pathlib import Path
+import json
 
 
 class UserLoginView(APIView):
@@ -34,34 +38,45 @@ class ImageAPIVIEW(APIView):
     def post(self,request):
 
         file_ref = request.FILES['image']
+        file_name = file_ref.name
+        row_id = request.GET.get('id')
+
         file_ext = file_ref.name.split('.')[-1]
         is_front = request.GET['front']
-        row_id = request.GET['id']
         ext=['jpg','jpeg','png']
         if file_ext in ext:
+            image = Image.open(file_ref)
+            MAX_SIZE = (500,500)
+            image.thumbnail(MAX_SIZE)
+
+            file_path='media/thumbnails/'+file_name
+            image.save(file_path)
+            img = open(file_path, 'rb')
+            response = FileResponse(img)
+            thumbnail = response.file_to_stream.name
+
             if row_id != None:
-            #if request.data['id'].exists():
-                if is_front == 'True':                               #.exists():
-                    Card_Details.objects.filter(id = row_id).update(front_image = file_ref)
-                    return Response({'id' : row_id,'data': file_ref})
+                if is_front == 'True':                               
+                    Card_Details.objects.filter(id = row_id).update(front_image = file_ref ,front_thumbnail = thumbnail)
+                    return Response({'id' : row_id,'front_image_thumbnail': file_path})
                 else:
-                    Card_Details.objects.filter(id = row_id).update(back_image = file_ref)
-                    return Response({'id' : row_id,'data' : file_ref})    
+                    Card_Details.objects.filter(id = row_id).update(back_image = file_ref,back_thumbnail = thumbnail)
+                    return Response({'id' : row_id,'back_image_thumbnail': file_path})    
             else:       
                 if is_front=='True':
-                    Card_Details.objects.create(front_image = file_ref)
-                    return Response({'data': file_ref})
+                    Card_Details.objects.create(front_image = file_ref.name,front_thumbnail = thumbnail)
+                    return Response({'data': file_ref.name,'front_image_thumbnail': file_path})
                 else:
-                    Card_Details.objects.create(back_image = file_ref)
-                    return Response({'data': file_ref})
+                    Card_Details.objects.create(back_image = file_ref.name,back_thumbnail = thumbnail)
+                    return Response({'data': file_ref.name,'back_image_thumbnail': file_path})
                
         else:
             return Response({"message":"Error in File Format"},status=status.HTTP_403_FORBIDDEN)
-               
+
 class FormData(APIView):
 
     def post(self,request):
-        details = request.data
+        details = request.data['']
         category = request.data['category']
         player_name = request.data['player_name']
         userid = request.data['userid']

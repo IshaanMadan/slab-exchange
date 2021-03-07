@@ -20,7 +20,7 @@ from django.urls import path,include
 from se_app.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('det',UserLoginView.as_view()),
+   path('login',UserLoginView.as_view()),
     # # path('abc',hello),
     path('image',ImageAPIVIEW.as_view()),
 #    path('obtain_token/', authenticate_user),
