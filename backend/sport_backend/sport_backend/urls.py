@@ -20,9 +20,9 @@ from django.urls import path,include
 from se_app.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
-   path('login',UserLoginView.as_view()),
-    # # path('abc',hello),
+    path('login',UserLoginView.as_view()),
     path('image',ImageAPIVIEW.as_view()),
+    path('detail/<int:pk>/',CompleteData.as_view()),
 #    path('obtain_token/', authenticate_user),
 ]
 if settings.DEBUG:

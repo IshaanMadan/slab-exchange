@@ -73,6 +73,12 @@ class ImageAPIVIEW(APIView):
         else:
             return Response({"message":"Error in File Format"},status=status.HTTP_403_FORBIDDEN)
 
+    def get(self,request):
+        data=Card_Details.objects.all()
+        serializer=CompleteDataSerializer(data,many=True)
+        return Response({'data':serializer.data,'message':'file fetched'}, status=status.HTTP_201_CREATED)
+        
+
 class FormData(APIView):
 
     def post(self,request):
@@ -94,15 +100,11 @@ class FormData(APIView):
             serializer.save()
         return Response({"data":serializer.data,"messgae":"successful"},status=status.HTTP_201_CREATED)
 
-    def get(self,request,pk):
-        data=ImageDetails.objects.get(id=pk)
-        serializers=CompleteDataSerializer(data)
-        return Response({'data':serializer.data,'message':'file fetched'}, status=status.HTTP_201_CREATED)
-
+    
 
 class CompleteData(APIView):
 
-    def get(self,request):
-        data=ImageDetails.objects.all()
-        serializers=CompleteDataSerializer(data,many=True)
+    def get(self,request,pk):
+        data=Card_Details.objects.get(id=pk)
+        serializer=CompleteDataSerializer(data)
         return Response({'data':serializer.data,'message':'file fetched'}, status=status.HTTP_201_CREATED)
