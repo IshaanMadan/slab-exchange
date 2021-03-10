@@ -14,6 +14,9 @@ from PIL import Image
 import argparse
 from pathlib import Path
 import json
+from io import BytesIO
+from django.core.files import File
+from django.forms.models import model_to_dict
 
 
 class UserLoginView(APIView):
@@ -35,76 +38,151 @@ class UserLoginView(APIView):
 
 class ImageAPIVIEW(APIView):
 
-    def post(self,request):
-
-        file_ref = request.FILES['image']
-        file_name = file_ref.name
-        row_id = request.GET.get('id')
-
-        file_ext = file_ref.name.split('.')[-1]
-        is_front = request.GET['front']
-        ext=['jpg','jpeg','png']
-        if file_ext in ext:
-            image = Image.open(file_ref)
-            MAX_SIZE = (500,500)
-            image.thumbnail(MAX_SIZE)
-
-            file_path='media/thumbnails/'+file_name
-            image.save(file_path)
-            img = open(file_path, 'rb')
-            response = FileResponse(img)
-            thumbnail = response.file_to_stream.name
-
-            if row_id != None:
-                if is_front == 'True':                               
-                    Card_Details.objects.filter(id = row_id).update(front_image = file_ref ,front_thumbnail = thumbnail)
-                    return Response({'id' : row_id,'front_image_thumbnail': file_path})
-                else:
-                    Card_Details.objects.filter(id = row_id).update(back_image = file_ref,back_thumbnail = thumbnail)
-                    return Response({'id' : row_id,'back_image_thumbnail': file_path})    
-            else:       
-                if is_front=='True':
-                    Card_Details.objects.create(front_image = file_ref.name,front_thumbnail = thumbnail)
-                    return Response({'data': file_ref.name,'front_image_thumbnail': file_path})
-                else:
-                    Card_Details.objects.create(back_image = file_ref.name,back_thumbnail = thumbnail)
-                    return Response({'data': file_ref.name,'back_image_thumbnail': file_path})
-               
-        else:
-            return Response({"message":"Error in File Format"},status=status.HTTP_403_FORBIDDEN)
-
-    def get(self,request):
-        data=Card_Details.objects.all()
-        serializer=CompleteDataSerializer(data,many=True)
-        return Response({'data':serializer.data,'message':'file fetched'}, status=status.HTTP_201_CREATED)
-        
-
-class FormData(APIView):
-
-    def post(self,request):
-        details = request.data['']
-        category = request.data['category']
-        player_name = request.data['player_name']
-        userid = request.data['userid']
-        status = request.data['status']
-        brand_name = request.data['brand_name']
-        card_number = request.data['card_number']
-        certification = request.data['certification']
-        certification_number = request.data['certification_number']
-        auto_grade = request.data['auto_grade']
-        card_grade = request.data['card_grade']
-        year = request.data['year']
-        Card_Details.object.filter(id=request.data['id']).update
-        serializer = FormSerializers(data=details)
-        if serializer.is_valid():
-            serializer.save()
-        return Response({"data":serializer.data,"messgae":"successful"},status=status.HTTP_201_CREATED)
-
+    permission_classes = [IsAuthenticated]
     
+    def post(self,request):
 
-class CompleteData(APIView):
+        try:
 
-    def get(self,request,pk):
-        data=Card_Details.objects.get(id=pk)
-        serializer=CompleteDataSerializer(data)
-        return Response({'data':serializer.data,'message':'file fetched'}, status=status.HTTP_201_CREATED)
+            file_ref = request.FILES['image']
+            file_name = file_ref.name
+            row_id = request.GET.get('id')
+            file_ext = file_ref.name.split('.')[-1]
+            is_front = bool(request.GET.get('front', False))
+            ext=['jpg','jpeg','png']
+            if file_ext not in ext:
+                raise Exception("Invalid Format")
+
+            if not row_id:
+                if is_front:
+                    front_file_ref, back_file_ref = file_ref, None
+                    front_thumbnail_path , back_thumbnail_path = create_thumbnail(is_front,file_ref), None
+                else:
+                    front_file_ref, back_file_ref = None, file_ref
+                    front_thumbnail_path , back_thumbnail_path  = None, create_thumbnail(is_front,file_ref)                     
+                
+                detail_ref = Card_Details(front_image=front_file_ref, back_image=back_file_ref,front_thumbnail=front_thumbnail_path, back_thumbnail=back_thumbnail_path, user_id=request.user.id)
+                detail_ref.save()
+                # detail_ref = CardDetailsNew(user_id=request.user.id)
+                # detail_ref.save()
+                # serializer=FormSerializers(data=detail_ref , many=False )
+                # serializer=CompleteDataSerializer(data=detail_ref.__dict__, many=False )
+                # serializer.is_valid(raise_exception=True)
+                back_thumbnail_path = detail_ref.back_thumbnail.url if detail_ref.back_thumbnail else None
+                front_thumbnail_path = detail_ref.front_thumbnail.url if detail_ref.front_thumbnail else None
+                res_dict = {
+                    "id": detail_ref.id,
+                    "user_id": detail_ref.user.id,
+                    "back_thumbnail": back_thumbnail_path,
+                    "front_thumbnail": front_thumbnail_path,
+                }
+                return Response({'data': res_dict, "message": "Image uploaded successfully", "success": False},status=status.HTTP_201_CREATED)    
+            else:       
+                if is_front:
+                    front_file_ref, back_file_ref = file_ref, None
+                    front_thumbnail_path , back_thumbnail_path = create_thumbnail(is_front,file_ref), None
+                    detail_ref= Card_Details.objects.get(id=row_id)
+                    detail_ref.front_image = front_file_ref
+                    detail_ref.front_thumbnail = front_thumbnail_path
+                    detail_ref.save()
+                #    detail_ref = Card_Details.objects.filter(id=row_id).update(front_image = front_file_ref,front_thumbnail = front_thumbnail_path)
+                else:
+                    front_file_ref, back_file_ref = None, file_ref
+                    front_thumbnail_path , back_thumbnail_path  = None, create_thumbnail(is_front,file_ref)
+                    detail_ref= Card_Details.objects.get(id=row_id)
+                    detail_ref.back_image = back_file_ref
+                    detail_ref.back_thumbnail = back_thumbnail_path
+                    detail_ref.save()
+                #detail = Card_Details.objects.filter(id=row_id).update(front_image=front_file_ref, back_image=back_file_ref,front_thumbnail=front_thumbnail_path, back_thumbnail=back_thumbnail_path, user_id=request.user.id)
+                back_thumbnail_path = detail_ref.back_thumbnail.url if detail_ref.back_thumbnail else None
+                front_thumbnail_path = detail_ref.front_thumbnail.url if detail_ref.front_thumbnail else None
+                res_dict = {
+                    "id": detail_ref.id,
+                    "user_id": detail_ref.user.id,
+                    "back_thumbnail": back_thumbnail_path,
+                    "front_thumbnail": front_thumbnail_path,
+                }
+                return Response({'data': res_dict, "message": "Image uploaded successfully", "success": False},status=status.HTTP_201_CREATED)
+    
+        except Exception as err:
+            return Response({'data': None, "message": str(err), "success": False},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+def create_thumbnail(is_front, file_ref):
+    image = Image.open(file_ref)
+    file_name = file_ref.name
+    MAX_SIZE = (100, 100) 
+    image.thumbnail(MAX_SIZE)    
+    thumbnail_dir_name = "front_thumbnails" if is_front else "back_thumbnails"
+    final_path = os.path.join(settings.MEDIA_ROOT, thumbnail_dir_name, file_name)
+    relative_path = os.path.join(thumbnail_dir_name, file_name)
+    image.save(final_path)
+    return relative_path
+
+class DetailAPI(APIView):
+
+    permission_classes = (IsAuthenticated,)
+    def get(self,request):
+        statuses=request.GET['status']
+        
+        code_status=0
+        if(statuses=='pending'):
+            code_status=1
+        else:
+            code_status=2                 
+                              ##status__status__exact
+        if code_status==1:
+            card=Card_Details.objects.filter(user=row_request.user.id,="")
+            serializers=CompleteDataSerializer(data=card,many=True)
+            if serializers.is_valid():
+                serializers.save()
+            return Response({'data':serializers.data},status=status.HTTP_201_CREATED)
+        else:
+            card=Card_Details.objects.filter(user=row_request.user.id)
+            serializers=CompleteDataSerializer(data=card)
+            if serializers.is_valid():
+                serializers.save()
+            return Response({'data':serializers.data,'message':'file fetched'}, status=status.HTTP_201_CREATED)
+
+class savecarddetails(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = FormdataSerializers
+
+    def post(self,request):
+
+        print(request.data)
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        response = {
+            'success' : 'True',
+            'status code' : status.HTTP_200_OK,
+            'message' : serializer.data['message'],    
+        }
+        status_code = status.HTTP_200_OK
+        return Response(response,status=status_code)
+
+class getformlist(APIView):
+
+    permission_classes = [IsAuthenticated]
+    
+    def get(self,request):
+
+        category=Card_Category.objects.all()
+        certification=Certifications.objects.all()
+        card_grade=Cardgrade.objects.all()
+        auto_grade=Autograde.objects.all()
+
+
+        serializer1=categorySerializer(category,many=True)
+        serializer2=CardgradeSerializer(card_grade,many=True)
+        serializer3=certificationSerializer(certification,many=True)
+        serializer4=AutogradeSerializer(auto_grade,many=True)
+
+        response = {
+                'message':"list fetched succcessfully",
+                'data':[{'category' :serializer1.data,'card_grade' :serializer2.data,
+                'certification':serializer3.data,'auto_grade':serializer4.data,
+            }],
+                'success':True
+
+        }
+        return Response(response,status=status.HTTP_200_OK) 
