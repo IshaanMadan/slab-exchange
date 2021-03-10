@@ -85,7 +85,7 @@ class ImageAPIVIEW(APIView):
                     detail_ref.front_image = front_file_ref
                     detail_ref.front_thumbnail = front_thumbnail_path
                     detail_ref.save()
-                #    detail_ref = Card_Details.objects.filter(id=row_id).update(front_image = front_file_ref,front_thumbnail = front_thumbnail_path)
+                    #detail_ref = Card_Details.objects.filter(id=row_id).update(front_image = front_file_ref,front_thumbnail = front_thumbnail_path, user_id=request.user.id)
                 else:
                     front_file_ref, back_file_ref = None, file_ref
                     front_thumbnail_path , back_thumbnail_path  = None, create_thumbnail(is_front,file_ref)
@@ -93,7 +93,7 @@ class ImageAPIVIEW(APIView):
                     detail_ref.back_image = back_file_ref
                     detail_ref.back_thumbnail = back_thumbnail_path
                     detail_ref.save()
-                #detail = Card_Details.objects.filter(id=row_id).update(front_image=front_file_ref, back_image=back_file_ref,front_thumbnail=front_thumbnail_path, back_thumbnail=back_thumbnail_path, user_id=request.user.id)
+                    #detail_ref = Card_Details.objects.filter(id=row_id).update(back_image=back_file_ref,back_thumbnail=back_thumbnail_path, user_id=request.user.id)
                 back_thumbnail_path = detail_ref.back_thumbnail.url if detail_ref.back_thumbnail else None
                 front_thumbnail_path = detail_ref.front_thumbnail.url if detail_ref.front_thumbnail else None
                 res_dict = {
@@ -123,7 +123,8 @@ class DetailAPI(APIView):
     permission_classes = (IsAuthenticated,)
     def get(self,request):
         statuses=request.GET['status']
-        
+        row_userid=request.user.id
+        print(row_request.user)
         code_status=0
         if(statuses=='pending'):
             code_status=1
@@ -131,13 +132,13 @@ class DetailAPI(APIView):
             code_status=2                 
                               ##status__status__exact
         if code_status==1:
-            card=Card_Details.objects.filter(user=row_request.user.id,="")
+            card=Card_Details.objects.filter(user=row_userid,status=code_status)
             serializers=CompleteDataSerializer(data=card,many=True)
             if serializers.is_valid():
                 serializers.save()
             return Response({'data':serializers.data},status=status.HTTP_201_CREATED)
         else:
-            card=Card_Details.objects.filter(user=row_request.user.id)
+            card=Card_Details.objects.filter(user=row_userid)
             serializers=CompleteDataSerializer(data=card)
             if serializers.is_valid():
                 serializers.save()
