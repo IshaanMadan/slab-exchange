@@ -27,7 +27,7 @@ SECRET_KEY = '$*qw5wcn+s+wmz-&^v3z+lz*!yqtvfqc^px=g0$9hs*-%6hcgj'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -93,12 +93,13 @@ WSGI_APPLICATION = 'sport_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
+AUTH_USER_MODEL = 'se_app.User_Details'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'Card_Details',
         'USER': 'root',
-        'PASSWORD':'8383937715',
+        'PASSWORD':'Nishant@1',
     }
 }
 

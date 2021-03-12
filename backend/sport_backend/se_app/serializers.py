@@ -2,8 +2,11 @@ from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
 from se_app.models import *
 import jwt
+from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import update_last_login
+from rest_framework import status
+
 
 JWT_PAYLOAD_HANDLER = api_settings.JWT_PAYLOAD_HANDLER
 JWT_ENCODE_HANDLER = api_settings.JWT_ENCODE_HANDLER
@@ -61,10 +64,10 @@ class CompleteDataSerializer(serializers.ModelSerializer):
 
 class FormdataSerializers(serializers.Serializer):
 
-    row_id=serializers.IntegerField(write_only=True)
+    card_id=serializers.IntegerField(write_only=True)
     category=serializers.IntegerField(write_only=True)
     player_name=serializers.CharField(max_length=255,write_only=True)
-    status=serializers.CharField(max_length=255,write_only=True)
+    #status=serializers.CharField(max_length=255,write_only=True)
     brand_name=serializers.CharField(max_length=255,write_only=True)
     card_number=serializers.CharField(max_length=255,write_only=True)
     certification=serializers.IntegerField(write_only=True)
@@ -72,14 +75,19 @@ class FormdataSerializers(serializers.Serializer):
     auto_grade=serializers.CharField(max_length=255,write_only=True)
     card_grade=serializers.CharField(max_length=255,write_only=True)
     year=serializers.CharField(max_length=255,write_only=True)
+    autographed=serializers.BooleanField(write_only=True)
 
     message = serializers.CharField(max_length=255, read_only=True)
+    success = serializers.CharField(max_length=255, read_only=True)
+    status_code = serializers.CharField(max_length=255, read_only=True)
+
+
 
     def validate(self,data):
-        row_id = data.get("id", None)
+        card_id = data.get("card_id", None)
         category = data.get("category", None)
         player_name = data.get("player_name",None)
-        status = data.get("status", None)
+        #status = data.get("status", None)
         brand_name = data.get("brand_name", None)
         card_number = data.get("card_number", None)
         certification = data.get("certification", None)
@@ -87,26 +95,42 @@ class FormdataSerializers(serializers.Serializer):
         card_grade = data.get("card_grade", None)
         year = data.get("year", None)
         certification_number = data.get("certification_number", None)
-
-        if(Card_Details.objects.filter(id=row_id).exists()):
-            data=Card_Details.objects.filter(id=row_id).get()
-            data.category=category
-            data.player_name=player_name
-            data.status=status
-            data.brand_name=brand_name
-            data.card_number=card_number
-            data.certification=certification
-            data.auto_grade=auto_grade
-            data.card_grade=card_grade
-            data.year=year
-            data.certification_number=certification_number
-            data.save()
-            return {
-            'message':"updated form data"
-            }
-        else:
+        autographed=data.get("autographed",None)
+        try:
+            if(Card_Details.objects.filter(id=card_id).exists()):
+                data=Card_Details.objects.filter(id=card_id).get()
+                data.category_id=category
+                data.player_name=player_name
+                #data.status=status
+                data.brand_name=brand_name
+                data.card_number=card_number
+                data.certification_id=certification
+                data.auto_grade_id=auto_grade
+                data.card_grade_id=card_grade
+                data.year=year
+                data.certification_number=certification_number
+                data.autographed=autographed
+                data.status_id=2
+                data.save()
+                    
+                return {    
+                'message':"updated form data",
+                'success':True,
+                'status_code':status.HTTP_200_OK,
+                }
+            else:
+                return{
+                'message':"id is not present",
+                'success':True,
+                'status_code':status.HTTP_200_OK,
+                }
+        except Exception as e:
+            #print(str(e))
             return{
-            'message':"id is not present"
+                'message':'This Card Number already exist',
+                'success':False,
+                'status_code':status.HTTP_400_BAD_REQUEST,
+
             }
 
 class categorySerializer(serializers.ModelSerializer):

@@ -1,50 +1,76 @@
 from django.db import models
 from django.core.validators import MaxLengthValidator
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser,BaseUserManager,PermissionsMixin
 
 class login_types(models.Model):
     type=models.CharField(max_length=255)
 
     def __str__(self):
         return self.type
+class UserManager(BaseUserManager):
+    use_in_migrations = True
 
-class User_Details(AbstractBaseUser):
+    # def create_user(self, first_name, last_name, email, mobile, company, password=None):
+    #     if not email:
+    #         raise ValueError('Users Must Have an email address')
+    #     user = self.model(first_name=first_name, last_name=last_name, email=email, contact=mobile, company=company)
+    #     user.set_password(password)
+    #     user.save()
+    #     return user
+
+    def create_superuser(self, full_name, email, password):
+        if password is None:
+            raise TypeError('Superusers must have a password.')
+        user = self.model(full_name=full_name,email=email)
+        user.set_password(password)
+        user.is_superuser = True
+        user.is_staff = True
+        user.save(using=self._db)
+        return user
+
+class User_Details(AbstractBaseUser,PermissionsMixin):
+    full_name=models.CharField(max_length=255,blank=True)
     name=models.CharField(max_length=30)
     email = models.EmailField(max_length=254, unique=True)
     created_at=models.DateTimeField(auto_now_add=True)
     login_type=models.ForeignKey(login_types,on_delete=models.CASCADE,default='1')
     authToken=models.CharField(max_length=255)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
 
 
-    USERNAME_FIELD = 'name'
-    REQUIRED_FIELDS = []
+
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['full_name']
+    objects=UserManager()
 
     def __str__(self):
         return self.email
 
 class Card_Category(models.Model):
-    sports=models.CharField(max_length=255)
+    category_name=models.CharField(max_length=255)
 
     def __str__(self):
-      return str(self.sports)
+      return str(self.category_name)
 
 class Certifications(models.Model):
-    certificates=models.CharField(max_length=255)
+    certificate_name=models.CharField(max_length=255)
 
     def __str__(self):
-      return str(self.certificates)
+      return str(self.certificate_name)
 
 class Autograde(models.Model):
-    auto_grade=models.CharField(max_length=255)
+    grade_name=models.CharField(max_length=255)
 
     def __str__(self):
-      return str(self.auto_grade)
+      return str(self.grade_name)
 
 class Cardgrade(models.Model):
-    card_grade=models.CharField(max_length=255)
+    card_grade_name=models.CharField(max_length=255)
 
     def __str__(self):
-      return str(self.card_grade)
+      return str(self.card_grade_name)
 
 class Status(models.Model):
     status=models.CharField(max_length=7)
