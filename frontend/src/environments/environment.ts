@@ -3,7 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  FB_APP_ID: '276703494064080',
+  apiUrl:'https://5ea376f02bc6.ngrok.io'
 };
 
 /*

@@ -1,212 +1,713 @@
 <div class="conatiner-fluid no-gutters">
-    <!-- header menu -->
-    <div class="row header navbar-expand-sm sticky-top">
-        <div class="col-sm-6 col-6">
-            <div class="row">
-                <button class="btn sticky-top hide-sm" id="side-nav" data-toggle="collapse" href="#collapseExample" role="button">
-                    <img src="assets/images/icon/hamburger.png">
-                  </button>  
-                <h3 class="logo">Slab Exchange</h3>
-            </div>
-        </div>
-        <div class="col-sm-6 col-6">
-            <div class="dropdown float-right">
-                <button class="dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Jhone Doe
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="#">Logout</a>
-                </div>
-            </div>
-        </div>
+  <!-- header menu -->
+  <div class="row header navbar-expand-sm sticky-top">
+    <div class="col-sm-6 col-6">
+      <div class="row">
+        <button
+          class="btn sticky-top hide-sm"
+          id="side-nav"
+          data-toggle="collapse"
+          href="#collapseExample"
+          role="button"
+        >
+          <img src="assets/images/icon/hamburger.png" />
+        </button>
+        <h3 class="logo">Slab Exchange</h3>
+      </div>
     </div>
-    <div  class="row">
-        <!-- right side navigation -->
-        <div class="col-sm-2 side-upload">
-            <p>MAIN</p>
-            <div class="upload-btn-wrapper">
-                <button class="btn text-left"><img src="assets/images/icon/upload.png">
-                    Upload</button>
-                <input type="file" name="myfile" />
-            </div>
+    <div class="col-sm-6 col-6">
+      <div class="dropdown float-right">
+        <button
+          class="dropdown-toggle"
+          type="button"
+          id="dropdownMenuButton"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          {{ userData.name }}
+        </button>
+        <div class="dropdown-menu fix_position_right" aria-labelledby="dropdownMenuButton">
+          <a class="dropdown-item" (click)="logout()">Logout</a>
         </div>
-        
-        <!-- left side navigation  -->
-        <div class="col-sm-10 p-0 form-side">
-            <div class="row right-upload">
-                <div class="col-sm-9 col-9">
-                    <p>Please upload front and back photos of your card, then fill in the card's details</p>
-                </div>
-                <div class="col-sm-3 col-3 text-right pr-0">
-                    <label href="#" id="open-all" class="tab-open">Open all</label>
-                </div>
-            </div>
-            <div class="row">
-                <!--Accordion wrapper-->
-                <div class="accordian col-sm-12">
-                    <div class="col">
-                        <div class="tabs">
-                          <div class="tab">
-                            <input class="input-arrow" type="radio" id="rd1" name="rd" >
-                            <label class="tab-label" for="rd1">Card 1</label>
-                            <a id="delete"><img src="assets/images/icon/delete.png"></a>
-                            <div class="tab-content">
-                                <div class="row">
-                                    <div class="col-sm-3 upload-front">
-                                        <div class="upload-btn-wrapper">
-                                            <button class="btn text-left"><img src="assets/images/icon/upload.png">
-                                                Upload Front</button>
-                                            <input type="file" name="myfile" />
-                                        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <!-- right side navigation -->
+    <div class="col-sm-2 side-upload vh_100">
+      <p>MAIN</p>
+      <div class="upload-btn-wrapper">
+        <button class="btn text-left" [ngClass]="!viewMode ? '' : 'page_inactive' " (click)="viewMode = false;allExpandState = false;">
+          <!-- <img src="assets/images/icon/upload.png" />  -->
+          <i class="fa fa-upload mR5" aria-hidden="true"></i>
+          Upload
+        </button>
+      </div>
+      <div class="upload-btn-wrapper">
+        <button class="btn text-left" [ngClass]="viewMode ? '' : 'page_inactive' " (click)="viewMode = true;allExpandState = false;fetchCollections()">
+          <!-- <img src="assets/images/icon/upload.png" /> -->
+          <i class="fas fa-folder-open mR5"></i>
+           Collections
+        </button>
+      </div>
+    </div>
 
-                                        <div class="upload-btn-wrapper">
-                                            <button class="btn text-left"><img src="assets/images/icon/upload.png">
-                                                Upload Back</button>
-                                            <input type="file" name="myfile" />
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-8 form-template">
-                                        <div class="row">
-                                            <div class="col-sm-6">
-                                                <div class="form-group selector">
-                                                    <label for="sel1">Category*</label>
-                                                    <select class="form-control">
-                                                    <option>Select One</option>
-                                                    </select>
-                                                    <i class="fa fa-chevron-down"></i>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6"></div>
-                                            <div class="col-sm-6">
-                                                <div class="form-group">
-                                                    <label for="exampleInputEmail1">Year*</label>
-                                                    <!-- <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Year"> -->
-                                                    <p class="ans">2011</p>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="form-group">
-                                                    <label for="exampleInputEmail1">Brand Name*</label>
-                                                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Brand Name">
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="form-group">
-                                                    <label for="exampleInputEmail1">Player Name*</label>
-                                                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Player Name">
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="form-group">
-                                                    <label for="exampleInputEmail1">Card Number*</label>
-                                                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Card Number">
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="form-group selector">
-                                                    <label for="sel1">Certification*</label>
-                                                    <select class="form-control">
-                                                    <option>Choose Certification</option>
-                                                    </select>
-                                                    <i class="fa fa-chevron-down"></i>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="form-group selector">
-                                                    <label for="sel1">Card Grade*</label>
-                                                    <select class="form-control">
-                                                    <option>Select Card Grade</option>
-                                                    </select>
-                                                    <i class="fa fa-chevron-down"></i>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="form-group">
-                                                    <label for="exampleInputEmail1">Certification Number*</label>
-                                                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Certification Number">
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6"></div>
-                                            
-                                            <div class="col-sm-6">
-                                                <div class="form-group">
-                                                    <label >Autographed?</label>
-                                                    <div class="row check-box">    
-                                                        <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                            <input type="checkbox" class="form-check-input" value="">Yes
-                                                            </label>
-                                                        </div>
-                                                        <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                            <input type="checkbox" class="form-check-input" value="">No 
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="form-group selector">
-                                                    <label for="sel1">Auto Grade*</label>
-                                                    <select class="form-control">
-                                                    <option>Select Auto Grade</option>
-                                                    </select>
-                                                    <i class="fa fa-chevron-down"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+    <!-- left side navigation  -->
+    <div class="col-sm-10 p-0 form-side">
+      <div class="row right-upload">
+        <div  class="col-sm-9 col-9">
+          <p *ngIf="!viewMode">
+            Please upload front and back photos of your card, then fill in the
+            card's details
+          </p>
+        </div>
+        <div *ngIf="viewMode" class="col-sm-3 col-3 text-right pr-0">
+          <label href="#" id="open-all" *ngIf="!allExpandState" (click)="allExpandState = true" class="tab-open" style="cursor: pointer;">Open all</label>
+          <label href="#" id="open-all" *ngIf="allExpandState" (click)="allExpandState = false" class="tab-open" style="cursor: pointer;">Collapse all</label>
+        </div>
+        <!--  -->
+      </div>
+
+      <div class="row">
+
+        <!-- Add Cards section starts -->
+        <div class="accordian col-sm-12" *ngIf="!viewMode">
+          <div class="col">
+            <div class="tabs">
+              <form [formGroup]="cardForm">
+              <div class="tab" formArrayName="cards" *ngFor="let card of cardForm.get('cards')['controls']; let i = index">
+                <div [formGroupName]="i">
+                  <mat-accordion>
+                    <mat-expansion-panel [expanded]="allExpandState || !card.get('card_id').value" >
+                      <mat-expansion-panel-header>
+                        <mat-panel-title>
+                          <span class="font-bold"> Card {{i+1}} </span>
+                          <a id="delete" (click)="removeCard(i)"><img src="assets/images/icon/delete.png" /></a>
+                        </mat-panel-title>
+                        <mat-panel-description>
+                        </mat-panel-description>
+                      </mat-expansion-panel-header>
+                      <!-- Card Content Here -->
+                      <ng-template matExpansionPanelContent>
+                        <div class="row border_top">
+                          <div class="col-sm-3 upload-front">
+                            <div class="upload-btn-wrapper">
+                              <!-- image thumbnail -->
+
+
+                              <!-- *ngIf="!card.get(['image_group', 'front_image']).value" -->
+                              <button class="btn text-left" *ngIf="!card.get(['image_group', 'front_image']).value">
+                                <img src="assets/images/icon/upload.png" /> Upload
+                                Front
+                              </button>
+                              <input type="file" name="myfile" accept="image/*"
+                              *ngIf="!card.get(['image_group', 'front_image']).value"
+                              (change)="imageUploaded($event, i, true)" />
+
+                              <img
+                              class="preview_image"
+                              *ngIf="card.get(['image_group', 'front_image']).value"
+                              src="{{imageUrl}}{{card.get(['image_group', 'front_image']).value}}"
+                              alt="Front image"
+                              >
+                            </div>
+
+                            <div class="upload-btn-wrapper">
+                              <!-- *ngIf="!card.get(['image_group', 'back_image']).value" -->
+                              <button class="btn text-left" *ngIf="!card.get(['image_group', 'back_image']).value">
+                                <img src="assets/images/icon/upload.png" /> Upload
+                                Back
+                              </button>
+                              <input type="file" name="myfile" accept="image/*" *ngIf="!card.get(['image_group', 'back_image']).value" (change)="imageUploaded($event, i, null)" />
+
+                              <!-- image thumbnail -->
+                              <img
+                              class="preview_image"
+                              *ngIf="card.get(['image_group', 'back_image']).value"
+                              src="{{imageUrl}}{{card.get(['image_group', 'back_image']).value}}"
+                              alt="Back image"
+                              >
+
+                            </div>
+                          </div>
+                          <div class="col-sm-8 form-template" formGroupName="form_group">
+                            <div class="row">
+                              <div class="col-sm-6">
+                                <div class="form-group selector">
+                                  <label for="sel1">Category*</label>
+                                  <select class="form-control" formControlName="category">
+                                    <option *ngFor="let item of dropdownList?.category" value="{{item.id}}"> {{item.category_name}} </option>
+                                  </select>
+                                  <i class="fa fa-chevron-down"></i>
                                 </div>
-                                <div class="row submit">
-                                    <button class="btn ">Submit
-                                    </button>
+                              </div>
+                              <div class="col-sm-6"></div>
+                              <div class="col-sm-6">
+                                <div class="form-group">
+                                  <label for="exampleInputEmail1">Year*</label>
+                                  <select
+                                    class="form-control"
+                                    formControlName="year"
+                                    >
+                                      <option *ngFor="let year of years;" value="{{year}}"> {{year}} </option>
+                                  </select>
                                 </div>
-                                <div class="col-sm-1"></div>
+                              </div>
+                              <div class="col-sm-6">
+                                <div class="form-group">
+                                  <label for="exampleInputEmail1">Brand Name*</label>
+                                  <input
+                                    type="text"
+                                    class="form-control"
+                                    id="exampleInputEmail1"
+                                    aria-describedby="emailHelp"
+                                    placeholder="Enter Brand Name"
+                                    formControlName="brand_name"
+                                  />
+                                </div>
+                              </div>
+                              <div class="col-sm-6">
+                                <div class="form-group">
+                                  <label for="exampleInputEmail1">Player Name*</label>
+                                  <input
+                                    type="email"
+                                    class="form-control"
+                                    id="exampleInputEmail1"
+                                    aria-describedby="emailHelp"
+                                    placeholder="Enter Player Name"
+                                    formControlName="player_name"
+                                  />
+                                </div>
+                              </div>
+                              <div class="col-sm-6">
+                                <div class="form-group">
+                                  <label for="exampleInputEmail1">Card Number*</label>
+                                  <input
+                                    type="email"
+                                    class="form-control"
+                                    id="exampleInputEmail1"
+                                    aria-describedby="emailHelp"
+                                    placeholder="Enter Card Number"
+                                    formControlName="card_number"
+                                  />
+                                </div>
+                              </div>
+                              <div class="col-sm-6">
+                                <div class="form-group selector">
+                                  <label for="sel1">Certification*</label>
+                                  <select class="form-control" formControlName="certification">
+                                    <option disabled>Choose Certification</option>
+                                    <option *ngFor="let item of dropdownList?.certification" value="{{item.id}}"> {{item.certificate_name}} </option>
+                                  </select>
+                                  <i class="fa fa-chevron-down"></i>
+                                </div>
+                              </div>
+                              <div class="col-sm-6">
+                                <div class="form-group selector">
+                                  <label for="sel1">Card Grade*</label>
+                                  <select class="form-control" formControlName="card_grade">
+                                    <option disabled>Select Card Grade</option>
+                                    <option *ngFor="let item of dropdownList?.card_grade" value="{{item.id}}"> {{item.card_grade_name}} </option>
+                                  </select>
+                                  <i class="fa fa-chevron-down"></i>
+                                </div>
+                              </div>
+                              <div class="col-sm-6">
+                                <div class="form-group">
+                                  <label for="exampleInputEmail1"
+                                    >Certification Number*</label
+                                  >
+                                  <input
+                                    type="email"
+                                    class="form-control"
+                                    id="exampleInputEmail1"
+                                    aria-describedby="emailHelp"
+                                    placeholder="Enter Certification Number"
+                                    formControlName="certification_number"
+                                  />
+                                </div>
+                              </div>
+                              <div class="col-sm-6"></div>
+
+                              <div class="col-sm-6">
+                                <div class="form-group">
+                                  <label>Autographed?</label>
+                                  <div class="row check-box">
+                                    <div class="form-check-inline">
+                                      <label class="form-check-label">
+                                        <input
+                                          type="checkbox"
+                                          class="form-check-input"
+                                          [disabled]="card.get('form_group').disabled"
+                                          [checked]="card.get(['form_group', 'autographed']).value"
+                                          value=""
+                                          (click)="updateAutographed($event, i, true)"
+                                        />Yes
+                                      </label>
+                                    </div>
+                                    <div class="form-check-inline">
+                                      <label class="form-check-label">
+                                        <input
+                                          type="checkbox"
+                                          class="form-check-input"
+                                          [disabled]="card.get('form_group').disabled"
+                                          [checked]="!card.get(['form_group', 'autographed']).value"
+                                          value=""
+                                          (click)="updateAutographed($event, i, false)"
+                                        />No
+                                      </label>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="col-sm-6">
+                                <div class="form-group selector">
+                                  <label for="sel1">Auto Grade*</label>
+                                  <select class="form-control" formControlName="auto_grade" >
+                                    <option disabled>Select Auto Grade</option>
+                                    <option *ngFor="let item of dropdownList?.auto_grade" value="{{item.id}}"> {{item.grade_name}} </option>
+                                  </select>
+                                  <i class="fa fa-chevron-down"></i>
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                          <!-- ################### -->
-                          <div class="tab">
-                            <input type="radio" id="rd2" name="rd">
-                            <label class="tab-label" for="rd2">Item 2</label>
-                            <div class="tab-content">
-                              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nihil, aut.
-                            </div>
-                          </div>
-                          <div class="tab">
-                            <input type="radio" id="rd3" name="rd">
-                            <label class="tab-label" for="rd3">Item 2</label>
-                            <div class="tab-content">
-                              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nihil, aut.
-                            </div>
-                          </div>
-                          <div class="tab">
-                            <input type="radio" id="rd4" name="rd">
-                            <label class="tab-label" for="rd4">Item 2</label>
-                            <div class="tab-content">
-                              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nihil, aut.
-                            </div>
-                          </div>
-                          <div class="tab">
-                            <input type="radio" id="rd3" name="rd">
-                            <label for="rd3" class="tab-close">Close others &times;</label>
-                          </div>
-                          <!-- #########################3 -->
-                      </div>
+                        <div class="row submit" *ngIf="!card.get('form_group').disabled">
+                          <button class="btn button_disabled"
+                              [disabled]="!card.get('form_group').valid"
+                              (click)="updateCardData(i)"
+                              >
+                              Submit
+                          </button>
+                        </div>
+                        <div class="col-sm-1"></div>
+                      </ng-template>
+                    </mat-expansion-panel>
+                  </mat-accordion>
                 </div>
-                <!-- Accordion wrapper -->
+                <!-- Original CSS Accordian -->
+                <!-- <input class="input-arrow" type="radio" id="rd1" name="rd" />
+                <label class="tab-label" for="rd1">Card 1</label>
+                <a id="delete"><img src="assets/images/icon/delete.png" /></a>
+                <div class="tab-content">
+                  <div class="row">
+                    <div class="col-sm-3 upload-front">
+                      <div class="upload-btn-wrapper">
+                        <button class="btn text-left">
+                          <img src="assets/images/icon/upload.png" /> Upload
+                          Front
+                        </button>
+                        <input type="file" name="myfile" />
+                      </div>
+
+                      <div class="upload-btn-wrapper">
+                        <button class="btn text-left">
+                          <img src="assets/images/icon/upload.png" /> Upload
+                          Back
+                        </button>
+                        <input type="file" name="myfile" />
+                      </div>
+                    </div>
+                    <div class="col-sm-8 form-template">
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <div class="form-group selector">
+                            <label for="sel1">Category*</label>
+                            <select class="form-control">
+                              <option>Select One</option>
+                            </select>
+                            <i class="fa fa-chevron-down"></i>
+                          </div>
+                        </div>
+                        <div class="col-sm-6"></div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label for="exampleInputEmail1">Year*</label>
+                            <p class="ans">2011</p>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label for="exampleInputEmail1">Brand Name*</label>
+                            <input
+                              type="email"
+                              class="form-control"
+                              id="exampleInputEmail1"
+                              aria-describedby="emailHelp"
+                              placeholder="Enter Brand Name"
+                            />
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label for="exampleInputEmail1">Player Name*</label>
+                            <input
+                              type="email"
+                              class="form-control"
+                              id="exampleInputEmail1"
+                              aria-describedby="emailHelp"
+                              placeholder="Enter Player Name"
+                            />
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label for="exampleInputEmail1">Card Number*</label>
+                            <input
+                              type="email"
+                              class="form-control"
+                              id="exampleInputEmail1"
+                              aria-describedby="emailHelp"
+                              placeholder="Enter Card Number"
+                            />
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group selector">
+                            <label for="sel1">Certification*</label>
+                            <select class="form-control">
+                              <option>Choose Certification</option>
+                            </select>
+                            <i class="fa fa-chevron-down"></i>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group selector">
+                            <label for="sel1">Card Grade*</label>
+                            <select class="form-control">
+                              <option>Select Card Grade</option>
+                            </select>
+                            <i class="fa fa-chevron-down"></i>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label for="exampleInputEmail1"
+                              >Certification Number*</label
+                            >
+                            <input
+                              type="email"
+                              class="form-control"
+                              id="exampleInputEmail1"
+                              aria-describedby="emailHelp"
+                              placeholder="Enter Certification Number"
+                            />
+                          </div>
+                        </div>
+                        <div class="col-sm-6"></div>
+
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label>Autographed?</label>
+                            <div class="row check-box">
+                              <div class="form-check-inline">
+                                <label class="form-check-label">
+                                  <input
+                                    type="checkbox"
+                                    class="form-check-input"
+                                    value=""
+                                  />Yes
+                                </label>
+                              </div>
+                              <div class="form-check-inline">
+                                <label class="form-check-label">
+                                  <input
+                                    type="checkbox"
+                                    class="form-check-input"
+                                    value=""
+                                  />No
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group selector">
+                            <label for="sel1">Auto Grade*</label>
+                            <select class="form-control">
+                              <option>Select Auto Grade</option>
+                            </select>
+                            <i class="fa fa-chevron-down"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row submit">
+                    <button class="btn">Submit</button>
+                  </div>
+                  <div class="col-sm-1"></div>
+                </div> -->
+              </div>
+              </form>
+              <!-- <div class="tab">
+                <input type="radio" id="rd2" name="rd" />
+                <label class="tab-label" for="rd2">Item 2</label>
+                <div class="tab-content">
+                  Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                  Nihil, aut.
+                </div>
+              </div>
+              <div class="tab">
+                <input type="radio" id="rd3" name="rd" />
+                <label class="tab-label" for="rd3">Item 2</label>
+                <div class="tab-content">
+                  Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                  Nihil, aut.
+                </div>
+              </div>
+              <div class="tab">
+                <input type="radio" id="rd4" name="rd" />
+                <label class="tab-label" for="rd4">Item 2</label>
+                <div class="tab-content">
+                  Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                  Nihil, aut.
+                </div>
+              </div>
+              <div class="tab">
+                <input type="radio" id="rd3" name="rd" />
+                <label for="rd3" class="tab-close">Close others &times;</label>
+              </div> -->
             </div>
-            <div class="pb-6"></div>
+          </div>
         </div>
-        <!-- Add more grid -->
-        <div class="row add-more fixed-bottom">
-            <div class="col-sm-12 submit">
-                <button class="btn ">+ Add More
-                </button>
+        <!-- Add Card Section Ends -->
+
+        <!-- View Cards Section Starts -->
+
+        <div class="accordian col-sm-12" *ngIf="viewMode">
+          <div class="col">
+            <div class="tabs">
+              <div class="center_text" *ngIf="!collectionList.length">
+                <p class="font-bold" > No cards found </p>
+              </div>
+              <div class="tab" *ngFor="let card of collectionList; let i = index">
+                <div>
+                  <mat-accordion>
+                    <mat-expansion-panel [expanded]="allExpandState">
+                      <mat-expansion-panel-header>
+                        <mat-panel-title>
+                          <span class="font-bold"> Card {{i+1}} </span>
+                          <a id="delete" (click)="deleteCard(i)"><img src="assets/images/icon/delete.png" /></a>
+                        </mat-panel-title>
+                        <mat-panel-description>
+                        </mat-panel-description>
+                      </mat-expansion-panel-header>
+                      <!-- Card Content Here -->
+                      <ng-template matExpansionPanelContent>
+                        <div class="row border_top">
+                          <div class="col-sm-3 upload-front">
+                            <div class="upload-btn-wrapper">
+                              <img
+                              class="preview_image"
+                              src="{{imageUrl}}{{card.front_thumbnail}}"
+                              alt="Front Image of Card"
+                              >
+                              <!-- <button class="btn text-left">
+                                <img src="assets/images/icon/upload.png" /> Upload
+                                Front
+                              </button>
+                              <input type="file" name="myfile" (change)="imageUploaded($event, i, true)" /> -->
+                            </div>
+
+                            <div class="upload-btn-wrapper">
+                              <img
+                              class="preview_image"
+                              src="{{imageUrl}}{{card.back_thumbnail}}"
+                              alt="Back Image of Card"
+                              >
+                              <!-- <button class="btn text-left">
+                                <img src="assets/images/icon/upload.png" /> Upload
+                                Back
+                              </button>
+                              <input type="file" name="myfile" (change)="imageUploaded($event, i, false)" /> -->
+                            </div>
+                          </div>
+                          <div class="col-sm-8 form-template">
+                            <div class="row">
+                              <div class="col-sm-6">
+                                <div class="form-group selector">
+                                  <label for="sel1">Category: </label>
+                                  <span class="font-bold"> {{card.category}} </span>
+                                  <!-- <select class="form-control">
+                                    <option *ngFor="let item of dropdownList?.category" value="{{item.id}}"> {{item.sports}} </option>
+                                  </select>
+                                  <i class="fa fa-chevron-down"></i>-->
+                                </div>
+                              </div>
+                              <div class="col-sm-6"></div>
+                              <div class="col-sm-6">
+                                <div class="form-group">
+                                  <label for="exampleInputEmail1">Year: </label>
+                                  <span class="font-bold"> {{card.year}} </span>
+                                  <!-- <select
+                                    class="form-control"
+                                    formControlName="year"
+                                    >
+                                      <option *ngFor="let year of years;" value="{{year}}"> {{year}} </option>
+                                  </select> -->
+                                </div>
+                              </div>
+                              <div class="col-sm-6">
+                                <div class="form-group">
+                                  <label for="exampleInputEmail1">Brand Name: </label>
+                                  <span class="font-bold"> {{card.brand_name}} </span>
+                                  <!-- <input
+                                    type="text"
+                                    class="form-control"
+                                    id="exampleInputEmail1"
+                                    aria-describedby="emailHelp"
+                                    placeholder="Enter Brand Name"
+                                    formControlName="brand_name"
+                                  /> -->
+                                </div>
+                              </div>
+                              <div class="col-sm-6">
+                                <div class="form-group">
+                                  <label for="exampleInputEmail1">Player Name: </label>
+                                  <span class="font-bold"> {{card.player_name}} </span>
+                                  <!-- <input
+                                    type="email"
+                                    class="form-control"
+                                    id="exampleInputEmail1"
+                                    aria-describedby="emailHelp"
+                                    placeholder="Enter Player Name"
+                                    formControlName="player_name"
+                                  /> -->
+                                </div>
+                              </div>
+                              <div class="col-sm-6">
+                                <div class="form-group">
+                                  <label for="exampleInputEmail1">Card Number: </label>
+                                  <span class="font-bold"> {{card.card_number}} </span>
+                                  <!-- <input
+                                    type="email"
+                                    class="form-control"
+                                    id="exampleInputEmail1"
+                                    aria-describedby="emailHelp"
+                                    placeholder="Enter Card Number"
+                                    formControlName="card_number"
+                                  /> -->
+                                </div>
+                              </div>
+                              <div class="col-sm-6">
+                                <div class="form-group selector">
+                                  <label for="sel1">Certification: </label>
+                                  <span class="font-bold"> {{card.certification}} </span>
+                                  <!-- <select class="form-control" formControlName="certification">
+                                    <option disabled>Choose Certification</option>
+                                    <option *ngFor="let item of dropdownList?.certification" value="{{item.id}}"> {{item.certificates}} </option>
+                                  </select>
+                                  <i class="fa fa-chevron-down"></i> -->
+                                </div>
+                              </div>
+                              <div class="col-sm-6">
+                                <div class="form-group selector">
+                                  <label for="sel1">Card Grade: </label>
+                                  <span class="font-bold"> {{card.card_grade}} </span>
+                                  <!-- <select class="form-control" formControlName="card_grade">
+                                    <option disabled>Select Card Grade</option>
+                                    <option *ngFor="let item of dropdownList?.card_grade" value="{{item.id}}"> {{item.card_grade}} </option>
+                                  </select>
+                                  <i class="fa fa-chevron-down"></i> -->
+                                </div>
+                              </div>
+                              <div class="col-sm-6">
+                                <div class="form-group">
+                                  <label for="exampleInputEmail1"
+                                    >Certification Number: </label
+                                  >
+                                  <span class="font-bold"> {{card.certification_number}} </span>
+                                  <!-- <input
+                                    type="email"
+                                    class="form-control"
+                                    id="exampleInputEmail1"
+                                    aria-describedby="emailHelp"
+                                    placeholder="Enter Certification Number"
+                                    formControlName="certification_number"
+                                  /> -->
+                                </div>
+                              </div>
+                              <div class="col-sm-6"></div>
+
+                              <div class="col-sm-6">
+                                <div class="form-group">
+                                  <label>Autographed: </label>
+                                  <span class="font-bold"> {{card.autographed ? 'YES' : 'NO'}} </span>
+                                  <!-- <div class="row check-box">
+                                    <div class="form-check-inline">
+                                      <label class="form-check-label" *ngIf="card.autograph">
+                                        <input
+                                          type="checkbox"
+                                          class="form-check-input"
+                                          [disabled]="card.get('form_group').disabled"
+                                          [checked]="card.get(['form_group', 'autograph']).value"
+                                          value=""
+                                          (click)="updateAutographed($event, i, true)"
+                                        />
+                                        Yes
+                                      </label>
+                                    </div>
+                                    <div class="form-check-inline">
+                                      <label class="form-check-label" *ngIf="!card.autograph">
+                                        <input
+                                          type="checkbox"
+                                          class="form-check-input"
+                                          [disabled]="card.get('form_group').disabled"
+                                          [checked]="!card.get(['form_group', 'autograph']).value"
+                                          value=""
+                                          (click)="updateAutographed($event, i, false)"
+                                        />
+                                        No
+                                      </label>
+                                    </div>
+                                  </div> -->
+                                </div>
+                              </div>
+                              <div class="col-sm-6">
+                                <div class="form-group selector">
+                                  <label for="sel1">Auto Grade: </label>
+                                  <span class="font-bold"> {{card.auto_grade}} </span>
+                                  <!-- <select class="form-control" formControlName="auto_grade" >
+                                    <option disabled>Select Auto Grade</option>
+                                    <option *ngFor="let item of dropdownList?.auto_grade" value="{{item.id}}"> {{item.auto_grade}} </option>
+                                  </select>
+                                  <i class="fa fa-chevron-down"></i> -->
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row submit" *ngIf="!viewMode">
+                          <button *ngIf="!card.get('form_group').disabled" class="btn button_disabled"
+                              [disabled]="!card.get('form_group').valid"
+                              (click)="updateCardData(i)"
+                              >
+                              Submit
+                          </button>
+                        </div>
+                        <div class="col-sm-1"></div>
+                      </ng-template>
+                    </mat-expansion-panel>
+                  </mat-accordion>
+                </div>
+              </div>
             </div>
+          </div>
         </div>
 
+        <!-- View Cards Section Ends -->
+        <div class="pb-6"></div>
+
+      </div>
+      <!-- Add more grid -->
+      <div class="row add-more fixed-bottom" *ngIf="!viewMode">
+        <div class="col-sm-12 submit">
+          <button class="btn" (click)="addCard()" >+ Add More</button>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
-
-
-
