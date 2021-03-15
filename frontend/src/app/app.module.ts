@@ -14,12 +14,18 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpConfigInterceptor } from './_interceptors/http.interceptor';
+import { HeaderComponent } from './layout/header/header.component';
+import { SidebarComponent } from './layout/sidebar/sidebar.component';
+import { CollectionsComponent } from './collections/collections.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DashboardComponent,
-    LoginComponent
+    LoginComponent,
+    HeaderComponent,
+    SidebarComponent,
+    CollectionsComponent
   ],
   imports: [
     BrowserModule,

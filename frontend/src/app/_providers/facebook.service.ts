@@ -20,6 +20,7 @@ export class FacebookService {
       if(user != null) {
         this.dataService.login(user)
         .subscribe(response => { }, error => { });
+
         // mock test
         // this.dataService.setUserData(user);
         // this.router.navigate(['/dashboard']);

@@ -1,1 +1,18 @@
-<router-outlet></router-outlet>  
+<div class="main-container">
+  <!-- placeholder for the header -->
+  <ng-container *ngIf="showHeader$">
+    <app-header></app-header>
+  </ng-container>
+  <section>
+    <div class="conatiner-fluid no-gutters">
+      <div class="row">
+        <div class="col-sm-2 side-upload vh_100" *ngIf="showSidebar$">
+            <app-sidebar></app-sidebar>
+        </div>
+        <div class="p-0 form-side" [ngClass]="showSidebar$ ? 'col-sm-10' : 'col-sm-12 mB0'">
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

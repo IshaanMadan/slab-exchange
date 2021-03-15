@@ -162,6 +162,17 @@ export class DataService {
     return throwError(errMessage);
   }
 
+   confirmBox(confirmation_text = 'Are you sure want to continue?'): Promise<any> {
+    return Swal.fire({
+      title: confirmation_text,
+      // text: 'You will not be able to recover this file!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No'
+    })
+  }
+
   private showLoader(text:string = 'Processing ...') {
     Swal.fire({
       title: text,

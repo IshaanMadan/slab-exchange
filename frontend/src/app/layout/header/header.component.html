@@ -1,0 +1,35 @@
+<div class="row header navbar-expand-sm sticky-top">
+  <div class="col-sm-6 col-6">
+    <div class="row">
+      <button
+        class="btn sticky-top hide-sm"
+        id="side-nav"
+        data-toggle="collapse"
+        href="#collapseExample"
+        role="button"
+      >
+        <img src="assets/images/icon/hamburger.png" />
+      </button>
+      <a [routerLink]="['/dashboard']" class="no_link">
+        <h3 class="logo">Slab Exchange</h3>
+      </a>
+    </div>
+  </div>
+  <div class="col-sm-6 col-6">
+    <div class="dropdown float-right">
+      <button
+        class="dropdown-toggle"
+        type="button"
+        id="dropdownMenuButton"
+        data-toggle="dropdown"
+        aria-haspopup="true"
+        aria-expanded="false"
+      >
+        {{ userData.name }}
+      </button>
+      <div class="dropdown-menu fix_position_right" aria-labelledby="dropdownMenuButton">
+        <a class="dropdown-item" (click)="logout()">Logout</a>
+      </div>
+    </div>
+  </div>
+</div>
