@@ -70,13 +70,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
             // dropdown  is empty
           } else {
             this.dropdownList = dropdown;
-            this.sortKeys();
+            // this.sortKeys();
           }
         }
       );
     } else {
       this.dropdownList = this.dataService.formDropDownList[0];
-      this.sortKeys();
+      // this.sortKeys();
     }
 
     this.dataService.getCardList().subscribe(
@@ -160,7 +160,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.dataService
       .confirmBox('Are you sure want to delete?')
       .then((result) => {
-        console.log(result);
         if (result.isConfirmed) {
           this.cards = this.cardForm.get('cards') as FormArray;
           if (this.cards.at(index).get('card_id').value) {
@@ -258,10 +257,31 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.cards = this.cardForm.get('cards') as FormArray;
     const card_det = this.cards.at(index);
     const cardData = card_det.get('form_group').value;
-    cardData['card_id'] = card_det.get('card_id').value;
-    cardData['autographed'] = card_det.get(['form_group', 'autographed']).value
-      ? true
-      : false;
+    cardData['autographed'] = card_det.get(['form_group', 'autographed']).value ? true : false;
+
+    if(card_det.get('card_id').value) {
+      cardData['card_id'] = card_det.get('card_id').value;
+    }
+
+    if(!!cardData.auto_grade) {
+      cardData['auto_grade'] = card_det.get(['form_group','auto_grade']).value;
+    } else {
+      delete cardData.auto_grade
+    }
+
+    if(!card_det.get(['image_group','front_image']).value || !card_det.get(['image_group','back_image']).value ) {
+      this.dataService.confirmBox('Your images are not uploaded yet! Are you sure you want to continue ?')
+      .then(result => {
+        if (result.isConfirmed) {
+          this.saveCardDetails(index, cardData)
+          }
+      });
+      return
+    }
+    this.saveCardDetails(index, cardData)
+  }
+
+  saveCardDetails(index, cardData) {
     this.dataService.saveCardDetails(cardData).subscribe(
       (response) => {
         if (response.success == 'False') {

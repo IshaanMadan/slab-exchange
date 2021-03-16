@@ -65,7 +65,7 @@ export class DataService {
   }
 
   getCardList(status: string = 'pending') {
-    return this.http.get(environment.apiUrl+`/data-status?status=${status}`);
+    return this.http.get(environment.apiUrl+`/card-data-status?status=${status}`);
   }
 
   getDropdownList() {
@@ -86,10 +86,14 @@ export class DataService {
 
   uploadImage(imagedata, is_front, card_id) {
     this.showLoader('Uploading your image...')
-    let url  = `/card-image?front=${is_front}&card_id=${card_id}`;
+    let url  = `/card-image?`;
 
-    if(!is_front) {
-      url  = `/card-image?card_id=${card_id}`
+    if(card_id) {
+      url = url + `card_id=${card_id}&`
+    }
+
+    if(is_front) {
+      url  = url +  `front=${is_front}`
     }
 
     return this.http.post(
