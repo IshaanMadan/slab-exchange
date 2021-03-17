@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   FB_APP_ID: '276703494064080',
-  apiUrl: 'https://5719a17fbb1f.ngrok.io'
+  apiUrl: 'https://1084bc5eca5b.ngrok.io'
 };
 
 /*

@@ -262,6 +262,15 @@
                 <div class="row submit">
                       <button
                         class="btn button_disabled"
+                        [disabled]="
+                        !card.certification_number ||
+                        !card.card_grade ||
+                        !card.certification ||
+                        !card.card_number ||
+                        !card.player_name ||
+                        !card.brand_name ||
+                        !card.year ||
+                        !card.category"
                         (click)="updateCardData(i)"
                         *ngIf="editCardId == card.id"
                         >

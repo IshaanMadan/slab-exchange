@@ -117,7 +117,10 @@
                       <div class="col-sm-3 upload-front">
                         <div class="image_icon_fix">
 
-                          <div class="upload-btn-wrapper">
+                          <div class="upload-btn-wrapper"
+                          [ngClass]="{
+                            'rmrf_border': card.get(['image_group', 'front_image']).value
+                          }">
                             <button
                               class="btn text-left"
                               *ngIf="
@@ -158,7 +161,10 @@
                         </div>
 
                         <div class="image_icon_fix">
-                          <div class="upload-btn-wrapper">
+                          <div class="upload-btn-wrapper"
+                          [ngClass]="{
+                            'rmrf_border': card.get(['image_group', 'back_image']).value
+                          }">
                             <button
                               class="btn text-left"
                               *ngIf="
