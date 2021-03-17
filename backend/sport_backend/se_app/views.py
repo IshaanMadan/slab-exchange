@@ -16,7 +16,7 @@ from pathlib import Path
 import json
 from django.core.files import File
 from django.forms.models import model_to_dict
-
+from django.contrib import messages
 
 class UserLoginView(APIView):
 
@@ -47,12 +47,11 @@ class ImageAPIVIEW(APIView):
             file_ref = request.FILES['image']
             file_name = file_ref.name
             row_id = request.GET.get('card_id')
-            row_id = None if row_id == 'null' else int(row_id)
-        #    user=request.user.id
-            #import pdb;pdb.set_trace()
+        #    row_id = None if row_id == 'null' else int(row_id)
+        
             file_ext = file_ref.name.split('.')[-1]
             is_front = bool(request.GET.get('front', False))
-        #    is_front = true
+
             print(is_front)
             ext=['jpg','jpeg','png']
             if file_ext not in ext:
@@ -66,13 +65,9 @@ class ImageAPIVIEW(APIView):
                     front_file_ref, back_file_ref = None, file_ref
                     front_thumbnail_path , back_thumbnail_path  = None, create_thumbnail(is_front,file_ref)                     
                 
-                detail_ref = Card_Details(front_image=front_file_ref, back_image=back_file_ref,front_thumbnail=front_thumbnail_path, back_thumbnail=back_thumbnail_path, user_id=request.user.id, status_id=1)
+                detail_ref = Card_Details(front_image=front_file_ref, back_image=back_file_ref,front_thumbnail=front_thumbnail_path, back_thumbnail=back_thumbnail_path, user_id=request.user.id, status=0)
                 detail_ref.save()
-                # detail_ref = CardDetailsNew(user_id=request.user.id)
-                # detail_ref.save()
-                # serializer=FormSerializers(data=detail_ref , many=False )
-                # serializer=CompleteDataSerializer(data=detail_ref.__dict__, many=False )
-                # serializer.is_valid(raise_exception=True)
+
                 back_thumbnail_path = detail_ref.back_thumbnail.url if detail_ref.back_thumbnail else None
                 front_thumbnail_path = detail_ref.front_thumbnail.url if detail_ref.front_thumbnail else None
                 res_dict = {
@@ -89,7 +84,7 @@ class ImageAPIVIEW(APIView):
                     detail_ref= Card_Details.objects.get(id=row_id)
                     detail_ref.front_image = front_file_ref
                     detail_ref.front_thumbnail = front_thumbnail_path
-                    detail_ref.status_id = 1
+                    detail_ref.status = 0
                     detail_ref.save()
                     #detail_ref = Card_Details.objects.filter(id=row_id).update(front_image = front_file_ref,front_thumbnail = front_thumbnail_path, user_id=request.user.id)
                 else:
@@ -98,7 +93,7 @@ class ImageAPIVIEW(APIView):
                     detail_ref= Card_Details.objects.get(id=row_id)
                     detail_ref.back_image = back_file_ref
                     detail_ref.back_thumbnail = back_thumbnail_path
-                    detail_ref.status_id = 1
+                    detail_ref.status = 0
                     detail_ref.save()
                     #detail_ref = Card_Details.objects.filter(id=row_id).update(back_image=back_file_ref,back_thumbnail=back_thumbnail_path, user_id=request.user.id)
                 back_thumbnail_path = detail_ref.back_thumbnail.url if detail_ref.back_thumbnail else None
@@ -128,46 +123,110 @@ def create_thumbnail(is_front, file_ref):
 class DetailAPI(APIView):
 
     permission_classes = (IsAuthenticated,)
+    
     def get(self,request):
+
         statuses=request.GET['status']
         row_userid=request.user.id
-        #import pdb;pdb.set_trace()
-        print(row_userid)
-        #print(row_request.user)
+
         code_status=0
         if(statuses=='pending'):
-            code_status=1
+            code_status=0
         else:
-            code_status=2                 
+            code_status=1                 
                               ##status__status__exact
-        if code_status==1:
-            card=Card_Details.objects.filter(user_id=row_userid,status_id=code_status)
+        if code_status==0:
+            card=Card_Details.objects.filter(user_id=row_userid,status=code_status,is_deleted=0)
             serializers=CompleteDataSerializer(card,many=True)
             # if serializers.is_valid():
             #     serializers.save()
             return Response({'data':serializers.data},status=status.HTTP_201_CREATED)
         else:
-            card=Card_Details.objects.filter(user_id=row_userid,status_id=code_status)
+            card=Card_Details.objects.filter(user_id=row_userid,status=code_status,is_deleted=0)
             serializers=CompleteDataSerializer(card,many=True)
             # if serializers.is_valid():
             #     serializers.save()
             return Response({'data':serializers.data,'message':'file fetched'}, status=status.HTTP_201_CREATED)
 
-class savecarddetails(APIView):
-    permission_classes = (IsAuthenticated,)
-    serializer_class = FormdataSerializers
+# class savecarddetails(APIView):
+#     permission_classes = (IsAuthenticated,)
+#     serializer_class = FormdataSerializers
 
-    def post(self,request):
+#     def post(self,request):
 
-        print(request.data)
-        serializer = FormdataSerializers(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        response = {
-            'success' : serializer.data['success'],
-            'status_code' : serializer.data['status_code'],
-            'message' : serializer.data['message'],    
-        }
-        return Response(response)
+#         card_id=request.GET.get('card_id')
+#         userid=request.user.id
+#         category = request.data["category"]
+#         player_name = request.data["player_name"]
+#         #status = data.get("status", None)
+#         brand_name = request.data["brand_name"]
+#         card_number = request.data["card_number"]
+#         certification = request.data["certification"]
+#         auto_grade = request.data["auto_grade"]
+#         card_grade = request.data["card_grade"]
+#         year = request.data["year"]
+#         certification_number = request.data["certification_number"]
+#         autographed=request.data["autographed"]
+
+#         try:
+#             if card_id==None:
+#                 Card_Details.objects.create(category_id=category,card_grade_id=card_grade,player_name=player_name,brand_name=brand_name,
+#                                         card_number=card_number,certification_id=certification,certification_number=certification_number,
+#                                         year=year,auto_grade_id=auto_grade,autographed=autographed,status=True,user_id=userid,is_deleted=False)
+
+#                 return  Response({
+#                     'message':"saved a new form data",
+#                     'success':True,
+#                     'status_code':status.HTTP_200_OK,
+#                 })
+#             else:
+#                 if Card_Details.objects.filter(id=card_id).exists():
+#                     data=Card_Details.objects.filter(id=card_id).get()
+#                     data.category_id=category
+#                     data.player_name=player_name
+#                  #data.status=status
+#                     data.brand_name=brand_name
+#                     data.card_number=card_number
+#                     data.certification_id=certification
+#                     data.auto_grade_id=auto_grade
+#                     data.card_grade_id=card_grade
+#                     data.year=year
+#                     data.certification_number=certification_number
+#                     data.autographed=autographed
+#                     data.status=True
+#                     data.is_deleted=False
+#                     data.save()
+#                 return Response({    
+#                         'message':"Card uploaded successfully",
+#                         'success':True,
+#                         'status_code':status.HTTP_200_OK,
+#                     })
+
+#         except Exception as err:
+#             return Response({
+#                      'message': str(err),
+#                      'success':False,
+#                      'status_code':status.HTTP_400_BAD_REQUEST,
+
+#              })
+#         # print(request.data)
+#         # print(request.user.id)
+#         # card_id = request.data['card_id']
+#         # if Card_Details.objects.filter(id=card_id).exists():
+#         #     Card=Card_Details.objects.filter(id=card_id).get()
+#         #     Card.user_id=request.user.id
+#         #     Card.save()
+#         #     print('ID',request.POST['card_id'])
+#         #     print(request.data['card_id'])
+#         #     print(request.data)
+#         #     serializer = FormdataSerializers(data=request.data)
+#         #     serializer.is_valid(raise_exception=True)
+#         #     response = {
+#         #     'success' : 'data added'#serializer.data['success'],
+#         # #    'status_code' : serializer.data['status_code'],
+#         # #    'message' : serializer.data['message'],    
+#         #     }
+#             return Response(response)
 
 class getformlist(APIView):
 
@@ -203,20 +262,23 @@ class Deletecard(APIView):
 
     def delete(self,request,card_id):
         #card_id = request.data('card_id')
+        messages.warning(request, 'Are you sure you want to delete ?')
         try:
-            #import pdb;pdb.set_trace()
             card=Card_Details.objects.filter(id=card_id).get()
             #final_path = os.path.join(settings.MEDIA_ROOT, thumbnail_dir_name, file)
             anonymous_user_id=card.user_id
             authenticate_user_id= request.user.id
             if(anonymous_user_id==authenticate_user_id):
-            # if(Card_Details.objects.filter(id=card_id).exists()):
-                Card_Details.objects.filter(id=card_id).delete()
-                response={
-                    'message':"Data delete succcessfully",
-                    'status_code':status.HTTP_200_OK,
-                    'success':True
-                }
+                if(Card_Details.objects.filter(id=card_id).exists()):
+                    Card = Card_Details.objects.filter(id=card_id).get()
+                    Card.is_deleted = True
+                    Card.save()
+                # Card_Details.objects.filter(id=card_id).delete()
+                    response={
+                     'message':"Data delete succcessfully",
+                     'status_code':status.HTTP_200_OK,
+                     'success':True
+                     }
                 #return Response(response)
             else:
                 response={
@@ -233,4 +295,23 @@ class Deletecard(APIView):
                     'success':False
                 }
             #return Response(response)
+        return Response(response)
+
+
+class savecarddetails(APIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = FormdataSerializers
+
+    def post(self,request):
+
+        serializer = FormdataSerializers(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        Card=Card_Details.objects.filter(card_number=request.data['card_number']).get()
+        Card.user_id=request.user.id
+        Card.save()
+        response = {
+            'success' : serializer.data['success'],
+            'status_code' : serializer.data['status_code'],
+            'message' : serializer.data['message'],    
+        }
         return Response(response)

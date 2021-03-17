@@ -72,23 +72,17 @@ class Cardgrade(models.Model):
     def __str__(self):
       return str(self.card_grade_name)
 
-class Status(models.Model):
-    status=models.CharField(max_length=7)
-
-    def __str__(self):
-      return str(self.status)
-
 class Card_Details(models.Model):
     
     category=models.ForeignKey(Card_Category,on_delete=models.CASCADE,max_length=255,null=True,blank=True)
     player_name=models.CharField(max_length=255,blank=True,null=True)
     front_image=models.ImageField(upload_to='front_images',null=True,blank=True)
     upload_time=models.DateTimeField(auto_now_add=True,null=True,blank=True)
-    back_thumbnail=models.ImageField(upload_to='front_thumbnails',max_length=255,null=True, blank=True)
-    front_thumbnail=models.ImageField(upload_to='back_thumbanils',max_length=255,null=True,blank=True)
+    back_thumbnail=models.ImageField(upload_to='back_thumbnails',max_length=255,null=True, blank=True)
+    front_thumbnail=models.ImageField(upload_to='front_thumbanils',max_length=255,null=True,blank=True)
     back_image=models.ImageField(upload_to='back_images',null=True,blank=True)
     user=models.ForeignKey(User_Details,on_delete=models.CASCADE,null=True,blank=True)
-    status=models.ForeignKey(Status,on_delete=models.CASCADE,max_length=7,null=True,blank=True)
+    status=models.BooleanField(null=True,blank=True,default=False)
     brand_name=models.CharField(max_length=255,null=True,blank=True)
     card_number=models.CharField(max_length=255,unique=True,null=True,blank=True)
     certification=models.ForeignKey(Certifications,on_delete=models.CASCADE,max_length=255,null=True,blank=True)
@@ -97,6 +91,7 @@ class Card_Details(models.Model):
     card_grade=models.ForeignKey(Cardgrade,on_delete=models.CASCADE,max_length=255,null=True,blank=True)
     year=models.IntegerField(null=True,blank=True)
     autographed=models.BooleanField(null=True,blank=True)
+    is_deleted=models.BooleanField(null=True,blank=False,default=False)
 
 # class CardDetailsNew(models.Model):
 #     # front_image=models.ImageField(upload_to='front_images',null=True,blank=True)

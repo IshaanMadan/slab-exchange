@@ -19,11 +19,8 @@ from se_app.views import *
 urlpatterns = [
     path('login',UserLoginView.as_view()),
     path('card-image',ImageAPIVIEW.as_view()),
-    path('data-status',DetailAPI.as_view()),
+    path('card-data-status',DetailAPI.as_view()),
     path('save-card-details',savecarddetails.as_view()),
     path('get-form-list',getformlist.as_view()),
     path('delete-card/<str:card_id>',Deletecard.as_view()),
-
-
-
 ]
