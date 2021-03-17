@@ -69,7 +69,6 @@ export class CollectionsComponent implements OnInit, OnDestroy {
     this.dataService
     .confirmBox('Are you sure want to delete?')
     .then((result) => {
-      console.log(result);
       if (result.isConfirmed) {
         this.dataService.deleteCard(this.collectionList[index].id)
         .subscribe((response:any ) => {
@@ -110,6 +109,8 @@ export class CollectionsComponent implements OnInit, OnDestroy {
   // ImageUpload
 
   imageUploaded($event, index, is_front) {
+
+    if(!$event.target.files.length) { return }
     const fromData = new FormData();
     fromData.append('image', $event.target.files[0]);
 
@@ -128,9 +129,6 @@ export class CollectionsComponent implements OnInit, OnDestroy {
   }
 
   updateCardData(index) {
-
-    console.log(this.collectionList[index]);
-
     const cardData = {};
     cardData['card_id'] = this.collectionList[index].id
     cardData['category'] = this.collectionList[index].category

@@ -220,6 +220,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   // ImageUpload
 
   imageUploaded($event, index, is_front) {
+
+    if(!$event.target.files.length) { return }
     const fromData = new FormData();
     fromData.append('image', $event.target.files[0]);
 

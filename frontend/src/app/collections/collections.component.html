@@ -88,13 +88,13 @@
                                name="myfile"
                                accept="image/*"
                                attr.id="image_upload_back{{i}}"
-                               (change)="imageUploaded($event, i, false)" />
+                               (change)="imageUploaded($event, i, null)" />
                         </div>
 
                       <!-- Edit Icon -->
                        <i
                        *ngIf="card.back_thumbnail && editCardId == card.id"
-                       (click)="changeImage(i,'front')"
+                       (click)="changeImage(i,'back')"
                        class="fas fa-pen edit_icon"
                        ></i>
                     </div>
