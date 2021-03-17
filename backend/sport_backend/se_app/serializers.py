@@ -41,16 +41,16 @@ class UserLoginSerializer(serializers.Serializer):
             'jwttoken': jwt_token
         }
 
-class ImageSerializers(serializers.ModelSerializer):
-    class Meta:
-        model=Card_Details
-        fields=('id',)
+# class ImageSerializers(serializers.ModelSerializer):
+#     class Meta:
+#         model=Card_Details
+#         fields=('id',)
 
-class FormSerializers(serializers.ModelSerializer):
-    class Meta:
-        model=Card_Details
-        fields=('category','player_name','user','status','brand_name','card_number','certification'
-                'certification_number','auto_grade','card_grade','year','autographed')
+# class FormSerializers(serializers.ModelSerializer):
+#     class Meta:
+#         model=Card_Details
+#         fields=('category','player_name','user','status','brand_name','card_number','certification'
+#                 'certification_number','auto_grade','card_grade','year','autographed')
 
 class CompleteDataSerializer(serializers.ModelSerializer):
     class Meta:
@@ -64,7 +64,7 @@ class CompleteDataSerializer(serializers.ModelSerializer):
 
 class FormdataSerializers(serializers.Serializer):
 
-    card_id=serializers.IntegerField(write_only=True)
+    card_id=serializers.IntegerField(required=False)
     category=serializers.IntegerField(write_only=True)
     player_name=serializers.CharField(max_length=255,write_only=True)
     #status=serializers.CharField(max_length=255,write_only=True)
@@ -72,18 +72,17 @@ class FormdataSerializers(serializers.Serializer):
     card_number=serializers.CharField(max_length=255,write_only=True)
     certification=serializers.IntegerField(write_only=True)
     certification_number=serializers.CharField(max_length=255,write_only=True)
-    auto_grade=serializers.CharField(max_length=255,write_only=True)
+    auto_grade=serializers.CharField(max_length=255,required=False)
     card_grade=serializers.CharField(max_length=255,write_only=True)
     year=serializers.CharField(max_length=255,write_only=True)
-    autographed=serializers.BooleanField(write_only=True)
+    autographed=serializers.BooleanField(write_only=True,default=False)
 
     message = serializers.CharField(max_length=255, read_only=True)
     success = serializers.CharField(max_length=255, read_only=True)
     status_code = serializers.CharField(max_length=255, read_only=True)
 
-
-
     def validate(self,data):
+
         card_id = data.get("card_id", None)
         category = data.get("category", None)
         player_name = data.get("player_name",None)
@@ -97,37 +96,42 @@ class FormdataSerializers(serializers.Serializer):
         certification_number = data.get("certification_number", None)
         autographed=data.get("autographed",None)
         try:
-            if(Card_Details.objects.filter(id=card_id).exists()):
-                data=Card_Details.objects.filter(id=card_id).get()
-                data.category_id=category
-                data.player_name=player_name
-                #data.status=status
-                data.brand_name=brand_name
-                data.card_number=card_number
-                data.certification_id=certification
-                data.auto_grade_id=auto_grade
-                data.card_grade_id=card_grade
-                data.year=year
-                data.certification_number=certification_number
-                data.autographed=autographed
-                data.status_id=2
-                data.save()
-                    
-                return {    
-                'message':"updated form data",
-                'success':True,
-                'status_code':status.HTTP_200_OK,
+            if card_id == None:
+                Card_Details.objects.create(category_id=category,card_grade_id=card_grade,player_name=player_name,brand_name=brand_name,
+                                        card_number=card_number,certification_id=certification,certification_number=certification_number,
+                                        year=year,auto_grade_id=auto_grade,autographed=autographed,status=True)
+
+                return {
+                    'message':"saved a new form data",
+                    'success':True,
+                    'status_code':status.HTTP_200_OK,
                 }
             else:
-                return{
-                'message':"id is not present",
-                'success':True,
-                'status_code':status.HTTP_200_OK,
-                }
+                if(Card_Details.objects.filter(id=card_id).exists()):
+                    data=Card_Details.objects.filter(id=card_id).get()
+                    data.category_id=category
+                    data.player_name=player_name
+                #data.status=status
+                    data.brand_name=brand_name
+                    data.card_number=card_number
+                    data.certification_id=certification
+                    data.auto_grade_id=auto_grade
+                    data.card_grade_id=card_grade
+                    data.year=year
+                    data.certification_number=certification_number
+                    data.autographed=autographed
+                    data.status=True
+                    data.save()
+                    return {    
+                        'message':"Card uploaded successfully",
+                        'success':True,
+                        'status_code':status.HTTP_200_OK,
+                    }
+
         except Exception as e:
             #print(str(e))
             return{
-                'message':'This Card Number already exist',
+                'message':str(e),
                 'success':False,
                 'status_code':status.HTTP_400_BAD_REQUEST,
 
