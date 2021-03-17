@@ -85,17 +85,14 @@ export class DataService {
   }
 
   uploadImage(imagedata, is_front, card_id) {
-    this.showLoader('Uploading your image...')
     let url  = `/card-image?`;
-
     if(card_id) {
       url = url + `card_id=${card_id}&`
     }
-
     if(is_front) {
       url  = url +  `front=${is_front}`
     }
-
+    this.showLoader('Uploading your image...')
     return this.http.post(
       environment.apiUrl + url,
       imagedata
