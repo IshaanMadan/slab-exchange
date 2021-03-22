@@ -96,13 +96,14 @@ WSGI_APPLICATION = 'sport_backend.wsgi.application'
 AUTH_USER_MODEL = 'se_app.User_Details'
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'Card_Details',
-        'USER': 'root',
-        'PASSWORD':'Nishant@1',
+    'ENGINE': 'django.db.backends.mysql',
+    'NAME': 'slab',
+    'USER': 'slab',
+    'PASSWORD':'Slab@!123',
+    'HOST': '127.0.0.1',
+    'PORT': '3306',
     }
 }
-
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
@@ -179,6 +180,8 @@ JWT_AUTH = {
   'JWT_AUTH_HEADER_PREFIX': 'Bearer',
   'JWT_AUTH_COOKIE': None,
 }
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
