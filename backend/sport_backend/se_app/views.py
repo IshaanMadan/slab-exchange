@@ -112,7 +112,7 @@ class ImageAPIVIEW(APIView):
 def create_thumbnail(is_front, file_ref):
     image = Image.open(file_ref)
     file_name = file_ref.name
-    MAX_SIZE = (100, 100) 
+    MAX_SIZE = (175, 232) 
     image.thumbnail(MAX_SIZE)    
     thumbnail_dir_name = "front_thumbnails" if is_front else "back_thumbnails"
     final_path = os.path.join(settings.MEDIA_ROOT, thumbnail_dir_name, file_name)
