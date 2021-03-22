@@ -1,13 +1,93 @@
 <div class="login">
   <div class="row">
     <div class="col-sm-5 login-fb">
-      <div class="fb-div">
-        <h3>Login</h3>
-        <!-- <p>Login with your facebook account detail</p> -->
-        <a href="#" (click)="login()"
+      <div class="fb-div form_container">
+        <!-- <h3>Login</h3> -->
+        <mat-tab-group dynamicHeight animationDuration="0ms" (selectedTabChange)="changedTab($event)">
+          <mat-tab label="Sign Up">
+            <div class="signup_login_container">
+              <div class="social_login">
+                <a href="#" (click)="loginFB()"
+                ><img src="assets/images/icon/icon-facebook.png" /> Login with your
+                facebook account
+                </a>
+              </div>
+              <div class="or_div">
+                <div class="border_mid"></div>
+                <div class="middle_box"> OR </div>
+                <div class="border_mid"></div>
+              </div>
+              <div class="signup_form_container">
+                <form class="example-form" [formGroup]="signUpForm">
+                  <mat-form-field appearance="outline" class="example-full-width">
+                    <mat-label>First Name</mat-label>
+                    <input type="text" matInput placeholder="" value="" formControlName="firstName" >
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="example-full-width">
+                    <mat-label>Last Name</mat-label>
+                    <input type="text" matInput placeholder="" value="" formControlName="lastName">
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="example-full-width">
+                    <mat-label>Email Address</mat-label>
+                    <input type="text" matInput placeholder="" value="" formControlName="email">
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="example-full-width">
+                    <mat-label>Password</mat-label>
+                    <input matInput [type]="showPassword ? 'text' : 'password'" placeholder="" value="" formControlName="password">
+                    <i class="fa fa-eye position_eye_icon" aria-hidden="true" (click)="showPassword = !showPassword"></i>
+                  </mat-form-field>
+                  <p class="info_p"> At least 8 characters, 1 uppercase letter, 1 number & 1 symbol </p>
+                  <div class="form_control_field">
+                    <input type="checkbox" formControlName="agreetoTerms">
+                    <label>
+                      By signing up, you agree to the Terms of Service and Privacy Policy
+                    </label>
+                  </div>
+                  <input type="submit" value="Sign Up" class="btn signup_login_btn" [disabled]="signUpForm.invalid" (click)="signupViaEmail()">
+                </form>
+              </div>
+            </div>
+          </mat-tab>
+          <mat-tab label="Log In">
+            <div class="signup_login_container">
+              <div class="social_login">
+                <a href="#" (click)="loginFB()"
+                ><img src="assets/images/icon/icon-facebook.png" /> Login with your
+                facebook account
+                </a>
+              </div>
+              <div class="or_div">
+                <div class="border_mid"></div>
+                <div class="middle_box"> OR </div>
+                <div class="border_mid"></div>
+              </div>
+              <div class="signup_form_container">
+                <form class="example-form" [formGroup]="loginForm">
+
+                  <mat-form-field appearance="outline" class="example-full-width">
+                    <mat-label>Email Address</mat-label>
+                    <input type="text" matInput placeholder="" value="" formControlName="email">
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="example-full-width">
+                    <mat-label>Password</mat-label>
+                    <input [type]="showPassword ? 'text' : 'password'" matInput placeholder="" value="" formControlName="password">
+                    <i class="fa fa-eye position_eye_icon" aria-hidden="true" (click)="showPassword = !showPassword"></i>
+                  </mat-form-field>
+                  <input type="submit" value="Log In" class="btn signup_login_btn" [disabled]="loginForm.invalid" (click)="loginViaEmail()">
+                  <p class="info_p mT10"> By logging in, you agree to the Terms of Service and Privacy Policy </p>
+                </form>
+              </div>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+        <!-- <a href="#" (click)="login()"
           ><img src="assets/images/icon/icon-facebook.png" /> Login with your
           facebook account
-        </a>
+        </a> -->
       </div>
     </div>
     <div class="col-sm-7 login-img">

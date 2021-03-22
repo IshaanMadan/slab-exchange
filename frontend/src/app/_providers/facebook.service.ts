@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { SocialAuthService } from "angularx-social-login";
-import { FacebookLoginProvider } from "angularx-social-login";
+import { FacebookLoginProvider, GoogleLoginProvider } from "angularx-social-login";
 import { DataService } from './data.service';
 
 
@@ -10,7 +10,7 @@ import { DataService } from './data.service';
   providedIn: 'root'
 })
 export class FacebookService {
-
+  loginVia = '';
   constructor(
     private router: Router,
     private authService: SocialAuthService,
@@ -30,8 +30,14 @@ export class FacebookService {
     });
   }
 
-  login() {
+  loginViaFacebook() {
+    this.loginVia = 'FACEBOOK';
     this.authService.signIn(FacebookLoginProvider.PROVIDER_ID);
+  }
+
+  loginViaGoogle() {
+    this.loginVia = 'GOOGLE';
+    this.authService.signIn(GoogleLoginProvider.PROVIDER_ID);
   }
 
   logout() {

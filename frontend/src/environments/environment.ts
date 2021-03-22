@@ -5,7 +5,10 @@
 export const environment = {
   production: false,
   FB_APP_ID: '276703494064080',
-  apiUrl: 'https://1084bc5eca5b.ngrok.io'
+  GOOGLE_APP_ID:'780526202298-5j20bett8p44ld8sktau286pejdu9ita.apps.googleusercontent.com',
+  apiUrl: 'https://backend.sandlot.cards'
+  // Local URL
+  // apiUrl: 'https://9978338d2a95.ngrok.io'
 };
 
 /*

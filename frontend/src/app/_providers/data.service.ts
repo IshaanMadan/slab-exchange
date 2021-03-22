@@ -25,24 +25,69 @@ export class DataService {
 
   login(userData) {
     const obj = {
-      authToken: userData.authToken,
       email: userData.email,
-      name: userData.name,
-    };
+    }
+    if("provider" in userData) {
+      obj['authToken'] = userData.authToken
+      obj['name'] = userData.name
+      obj['loginType'] = userData.provider
+    } else {
+      obj['password'] = userData.password
+      obj['loginType'] = 'EMAIL'
+    }
+    this.showLoader();
     return this.http.post(environment.apiUrl + '/login', obj).pipe(
       tap((response: any) => {
+        Swal.close();
         const user: User = {
           id: userData.id,
           name: userData.name,
           email: userData.email,
-          avatar: userData.photoUrl,
+          // avatar: userData.photoUrl,
           jwtToken: response.jwttoken,
           authToken: userData.authToken,
         };
         this.handleSuccess(user, response.message);
       }),
-      catchError(this.handleError)
+      catchError(error => {
+        Swal.close();
+        const errMessage = 'Unable to login';
+        this.toastError(errMessage);
+        this.router.navigate(['/']);
+        return throwError(errMessage);
+      })
     );
+  }
+
+  signup(userData) {
+    const obj = {
+      first_name: userData.firstName,
+      last_name: userData.lastName,
+      email: userData.email,
+      password: userData.password
+    };
+    this.showLoader();
+    return this.http.post(environment.apiUrl+`/user-signup`, obj).pipe(
+      tap((response: any) => {
+        Swal.close();
+        const user: User = {
+          id: userData.id,
+          name: userData.name,
+          email: userData.email,
+          // avatar: userData.photoUrl,
+          jwtToken: response.jwttoken,
+          authToken: userData.authToken,
+        };
+        this.handleSuccess(user, response.message);
+      }),
+      catchError(error => {
+        Swal.close();
+        const errMessage = 'Unable to signup';
+        this.toastError(errMessage);
+        this.router.navigate(['/']);
+        return throwError(errMessage);
+      })
+    )
   }
 
   setUserData(userData) {
@@ -158,7 +203,7 @@ export class DataService {
 
   private handleError(error) {
     const errMessage = 'Unable to login';
-    this.toastError(errMessage);
+    this.toastError();
     this.router.navigate(['/']);
     return throwError(errMessage);
   }
