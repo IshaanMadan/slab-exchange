@@ -16,12 +16,15 @@ import { HttpConfigInterceptor } from './_interceptors/http.interceptor';
 import { HeaderComponent } from './layout/header/header.component';
 import { SidebarComponent } from './layout/sidebar/sidebar.component';
 import { CollectionsComponent } from './collections/collections.component';
+import { VerifyUserComponent } from './verify-user/verify-user.component';
 
 // Material Components
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatInputModule} from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
+
 
 @NgModule({
   declarations: [
@@ -30,7 +33,9 @@ import {MatButtonModule} from '@angular/material/button';
     LoginComponent,
     HeaderComponent,
     SidebarComponent,
-    CollectionsComponent
+    CollectionsComponent,
+    VerifyUserComponent,
+    ResetPasswordComponent
   ],
   imports: [
     BrowserModule,

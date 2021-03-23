@@ -8,6 +8,7 @@ import { environment } from 'src/environments/environment';
 import { User } from '../_interface/auth.interface';
 
 import Swal from 'sweetalert2';
+import { FormGroup } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root',
@@ -26,14 +27,14 @@ export class DataService {
   login(userData) {
     const obj = {
       email: userData.email,
-    }
-    if("provider" in userData) {
-      obj['authToken'] = userData.authToken
-      obj['name'] = userData.name
-      obj['loginType'] = userData.provider
+    };
+    if ('provider' in userData) {
+      obj['authToken'] = userData.authToken;
+      obj['name'] = userData.name;
+      obj['login_type'] = userData.provider;
     } else {
-      obj['password'] = userData.password
-      obj['loginType'] = 'EMAIL'
+      obj['password'] = userData.password;
+      obj['login_type'] = 'EMAIL';
     }
     this.showLoader();
     return this.http.post(environment.apiUrl + '/login', obj).pipe(
@@ -49,7 +50,7 @@ export class DataService {
         };
         this.handleSuccess(user, response.message);
       }),
-      catchError(error => {
+      catchError((error) => {
         Swal.close();
         const errMessage = 'Unable to login';
         this.toastError(errMessage);
@@ -64,15 +65,15 @@ export class DataService {
       first_name: userData.firstName,
       last_name: userData.lastName,
       email: userData.email,
-      password: userData.password
+      password: userData.password,
     };
     this.showLoader();
-    return this.http.post(environment.apiUrl+`/user-signup`, obj).pipe(
+    return this.http.post(environment.apiUrl + `/user-signup`, obj).pipe(
       tap((response: any) => {
         Swal.close();
         const user: User = {
           id: userData.id,
-          name: userData.name,
+          name: userData.firstName + ' ' + userData.lastName,
           email: userData.email,
           // avatar: userData.photoUrl,
           jwtToken: response.jwttoken,
@@ -80,14 +81,14 @@ export class DataService {
         };
         this.handleSuccess(user, response.message);
       }),
-      catchError(error => {
+      catchError((error) => {
         Swal.close();
         const errMessage = 'Unable to signup';
         this.toastError(errMessage);
         this.router.navigate(['/']);
         return throwError(errMessage);
       })
-    )
+    );
   }
 
   setUserData(userData) {
@@ -102,7 +103,7 @@ export class DataService {
         this.setUserData(user);
         this.router.navigate(['/dashboard']);
       } else {
-        this.router.navigate(['/']);
+        // this.router.navigate(['/']);
       }
     } catch (e) {
       this.setUserData(null);
@@ -110,7 +111,9 @@ export class DataService {
   }
 
   getCardList(status: string = 'pending') {
-    return this.http.get(environment.apiUrl+`/card-data-status?status=${status}`);
+    return this.http.get(
+      environment.apiUrl + `/card-data-status?status=${status}`
+    );
   }
 
   getDropdownList() {
@@ -130,69 +133,66 @@ export class DataService {
   }
 
   uploadImage(imagedata, is_front, card_id) {
-    let url  = `/card-image?`;
-    if(card_id) {
-      url = url + `card_id=${card_id}&`
+    let url = `/card-image?`;
+    if (card_id) {
+      url = url + `card_id=${card_id}&`;
     }
-    if(is_front) {
-      url  = url +  `front=${is_front}`
+    if (is_front) {
+      url = url + `front=${is_front}`;
     }
-    this.showLoader('Uploading your image...')
-    return this.http.post(
-      environment.apiUrl + url,
-      imagedata
-    ).pipe(
+    this.showLoader('Uploading your image...');
+    return this.http.post(environment.apiUrl + url, imagedata).pipe(
       tap((response: any) => {
         Swal.close();
-        this.toastSuccess(response.message)
+        this.toastSuccess(response.message);
       }),
-      catchError(error => {
+      catchError((error) => {
         Swal.close();
         this.toastError();
-        return throwError('Something went wrong!')
+        return throwError('Something went wrong!');
       })
-    )
+    );
   }
 
   saveCardDetails(data) {
     this.showLoader();
-    return this.http.post(environment.apiUrl+`/save-card-details`, data)
-    .pipe(
+    return this.http.post(environment.apiUrl + `/save-card-details`, data).pipe(
       tap((response: any) => {
         Swal.close();
-        if(response.status_code == '400') {
-          this.toastError(response.message)
+        if (response.status_code == '400') {
+          this.toastError(response.message);
         } else {
-          this.toastSuccess(response.message)
+          this.toastSuccess(response.message);
         }
       }),
-      catchError(error => {
+      catchError((error) => {
         Swal.close();
         const errMessage = 'Something went wrong';
-        this.toastError(errMessage)
+        this.toastError(errMessage);
         return throwError(errMessage);
       })
-    )
+    );
   }
 
   deleteCard(card_id) {
     this.showLoader();
-    return this.http.delete(environment.apiUrl+`/delete-card/${card_id}`)
-    .pipe(
-      tap((response: any) => {
-        Swal.close();
-        if(response.success) {
-          this.toastSuccess(response.message)
-        } else {
-          this.toastError(response.message)
-        }
-      }),
-      catchError(error => {
-        Swal.close();
-        this.toastError();
-        return throwError('Something went wrong');
-      })
-      )
+    return this.http
+      .delete(environment.apiUrl + `/delete-card/${card_id}`)
+      .pipe(
+        tap((response: any) => {
+          Swal.close();
+          if (response.success) {
+            this.toastSuccess(response.message);
+          } else {
+            this.toastError(response.message);
+          }
+        }),
+        catchError((error) => {
+          Swal.close();
+          this.toastError();
+          return throwError('Something went wrong');
+        })
+      );
   }
 
   private handleSuccess(user: User, message) {
@@ -208,36 +208,38 @@ export class DataService {
     return throwError(errMessage);
   }
 
-   confirmBox(confirmation_text = 'Are you sure want to continue?'): Promise<any> {
+  confirmBox(
+    confirmation_text = 'Are you sure want to continue?'
+  ): Promise<any> {
     return Swal.fire({
       title: confirmation_text,
       // text: 'You will not be able to recover this file!',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Yes',
-      cancelButtonText: 'No'
-    })
+      cancelButtonText: 'No',
+    });
   }
 
-  private showLoader(text:string = 'Processing ...') {
+  private showLoader(text: string = 'Processing ...') {
     Swal.fire({
       title: text,
-      onBeforeOpen () {
-        Swal.showLoading ()
+      onBeforeOpen() {
+        Swal.showLoading();
       },
-      onAfterClose () {
-        Swal.hideLoading()
+      onAfterClose() {
+        Swal.hideLoading();
       },
       allowOutsideClick: false,
       allowEscapeKey: false,
       allowEnterKey: false,
       showConfirmButton: false,
-    })
+    });
   }
 
   private toastSuccess(message) {
     Swal.fire({
-      position: 'top-end',
+      position: 'top',
       icon: 'success',
       title: message,
       showConfirmButton: false,
@@ -247,11 +249,88 @@ export class DataService {
 
   private toastError(message = 'Something went wrong!') {
     Swal.fire({
-      position: 'top-end',
+      position: 'top',
       icon: 'error',
       title: message,
       showConfirmButton: false,
       timer: 1700,
     });
+  }
+
+  verifyAccount(token) {
+    this.showLoader();
+    return this.http.post(environment.apiUrl + '/verify-token', token).pipe(
+      tap((response: any) => {
+        Swal.close();
+        console.log(response);
+        this.toastSuccess(response.message);
+        this.router.navigate(['/']);
+      }),
+      catchError((error) => {
+        Swal.close();
+        const errMessage = 'Somthing Went Wrong';
+        this.toastError(errMessage);
+        this.router.navigate(['/']);
+        return throwError(errMessage);
+      })
+    );
+  }
+
+  async forgotPassModal() {
+    const { value: email } = await Swal.fire({
+      title: 'Forgot Password?',
+      html: `<p>If you have forgotten your password you can reset it here.
+       Please enter your registered email address below.</p>
+      `,
+      input: 'email',
+      inputPlaceholder: 'Email Address',
+      confirmButtonText: 'Submit',
+    });
+
+    if (email) {
+      // Swal.fire('Entered email: ' + email)
+      this.forgotPassword({ email: email }).subscribe();
+    }
+  }
+
+  forgotPassword(data) {
+    this.showLoader();
+    console.log(data);
+    return this.http.post(environment.apiUrl + '/forget-password', data).pipe(
+      tap((response: any) => {
+        Swal.close();
+        this.toastSuccess(response.message);
+        this.router.navigate(['/']);
+      }),
+      catchError((error) => {
+        Swal.close();
+        const errMessage = 'Something Went Wrong';
+        this.toastError(errMessage);
+        this.router.navigate(['/']);
+        return throwError(errMessage);
+      })
+    );
+  }
+
+  resetPassword(data: FormGroup) {
+    this.showLoader();
+    return this.http
+      .post(environment.apiUrl + '/reset-password', data.value)
+      .pipe(
+        tap((response: any) => {
+          Swal.close();
+          data.reset();
+          this.toastSuccess(response.message);
+          this.router.navigate(['/']);
+        }),
+        catchError((error) => {
+          Swal.close();
+          data.reset();
+          const errMessage = 'Something Went Wrong';
+          this.toastError(errMessage);
+          this.router.navigate(['/']);
+          return throwError(errMessage);
+        })
+      );
   }
 }

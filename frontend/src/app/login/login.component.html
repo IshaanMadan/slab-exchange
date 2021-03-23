@@ -77,6 +77,9 @@
                     <input [type]="showPassword ? 'text' : 'password'" matInput placeholder="" value="" formControlName="password">
                     <i class="fa fa-eye position_eye_icon" aria-hidden="true" (click)="showPassword = !showPassword"></i>
                   </mat-form-field>
+                  <div>
+                    <span (click)="forgotPassClick()" class="info_p float-right makeLink">Forgot Password?</span>
+                  </div>
                   <input type="submit" value="Log In" class="btn signup_login_btn" [disabled]="loginForm.invalid" (click)="loginViaEmail()">
                   <p class="info_p mT10"> By logging in, you agree to the Terms of Service and Privacy Policy </p>
                 </form>

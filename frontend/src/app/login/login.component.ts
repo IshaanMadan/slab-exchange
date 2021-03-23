@@ -69,4 +69,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     .subscribe((response) => { }, (error) => { })
   }
 
+  forgotPassClick(){
+    this.dataService.forgotPassModal()
+  }
 }
