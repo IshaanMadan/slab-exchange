@@ -23,4 +23,11 @@ urlpatterns = [
     path('save-card-details',savecarddetails.as_view()),
     path('get-form-list',getformlist.as_view()),
     path('delete-card/<str:card_id>',Deletecard.as_view()),
+    path('user-signup',signup.as_view()),
+    path('verify-token',verifytoken.as_view()),
+#    path('user-login',login.as_view()),
+    path('forget-password',forget_password.as_view()),
+    path('reset-password',reset_password.as_view()),
+    path('logout',logout.as_view()),
+
 ]

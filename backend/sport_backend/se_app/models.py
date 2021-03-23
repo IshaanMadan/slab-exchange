@@ -10,13 +10,13 @@ class login_types(models.Model):
 class UserManager(BaseUserManager):
     use_in_migrations = True
 
-    # def create_user(self, first_name, last_name, email, mobile, company, password=None):
-    #     if not email:
-    #         raise ValueError('Users Must Have an email address')
-    #     user = self.model(first_name=first_name, last_name=last_name, email=email, contact=mobile, company=company)
-    #     user.set_password(password)
-    #     user.save()
-    #     return user
+    def create_user(self, first_name, last_name, email, password=None):
+        if not email:
+            raise ValueError('Users Must Have an email address')
+        user = self.model(first_name=first_name, last_name=last_name, email=email)
+        user.set_password(password)
+        user.save()
+        return user
 
     def create_superuser(self, full_name, email, password):
         if password is None:
@@ -31,14 +31,16 @@ class UserManager(BaseUserManager):
 class User_Details(AbstractBaseUser,PermissionsMixin):
     full_name=models.CharField(max_length=255,blank=True)
     name=models.CharField(max_length=30)
+    first_name=models.CharField(max_length=255)
+    last_name=models.CharField(max_length=255)
+    password=models.CharField(max_length=254)
     email = models.EmailField(max_length=254, unique=True)
     created_at=models.DateTimeField(auto_now_add=True)
     login_type=models.ForeignKey(login_types,on_delete=models.CASCADE,default='1')
     authToken=models.CharField(max_length=255)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-
-
+    is_verified = models.BooleanField(default=False)
 
 
     USERNAME_FIELD = 'email'

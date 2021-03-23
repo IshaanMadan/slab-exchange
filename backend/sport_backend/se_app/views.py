@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status, exceptions
 from django.http import HttpResponse
 from django.contrib.auth.signals import user_logged_in
+from django.contrib.auth import logout, login
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from sport_backend import settings
 from django.http import FileResponse
@@ -17,6 +18,7 @@ import json
 from django.core.files import File
 from django.forms.models import model_to_dict
 from django.contrib import messages
+import jwt
 
 class UserLoginView(APIView):
 
@@ -24,16 +26,28 @@ class UserLoginView(APIView):
     serializer_class = UserLoginSerializer
 
     def post(self, request):
-        serializer = UserLoginSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        response = {
-            'success' : 'True',
-            'status_code' : status.HTTP_200_OK,
-            'message': 'User logged in  successfully',
-            'jwttoken' : serializer.data['jwttoken'],
-            }
-        status_code = status.HTTP_200_OK
-        return Response(response, status=status_code)
+
+        email=request.data['email']
+        print(email)
+        password=request.data['password']
+        print(password)
+        if (User_Details.objects.filter(email= email).exists()):
+            user=User_Details.objects.filter(email = email).get()
+            print(user)
+     #        user=authenticate(user)
+            login(request,user)
+            serializer = UserLoginSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+    #    login(request,)
+        
+            response = {
+                'success' : 'True',
+                'status_code' : status.HTTP_200_OK,
+                'message': 'User logged in  successfully',
+                'jwttoken' : serializer.data['jwttoken'],
+             }
+            status_code = status.HTTP_200_OK
+            return Response(response, status=status_code)
 
 
 class ImageAPIVIEW(APIView):
@@ -43,7 +57,7 @@ class ImageAPIVIEW(APIView):
     def post(self,request):
 
         try:
-            #import pdb;pdb.set_trace()
+        #     import pdb;pdb.set_trace()
             file_ref = request.FILES['image']
             file_name = file_ref.name
             row_id = request.GET.get('card_id')
@@ -65,7 +79,7 @@ class ImageAPIVIEW(APIView):
                     front_file_ref, back_file_ref = None, file_ref
                     front_thumbnail_path , back_thumbnail_path  = None, create_thumbnail(is_front,file_ref)                     
                 
-                detail_ref = Card_Details(front_image=front_file_ref, back_image=back_file_ref,front_thumbnail=front_thumbnail_path, back_thumbnail=back_thumbnail_path, user_id=request.user.id, status=0)
+                detail_ref = Card_Details(front_image=front_file_ref, back_image=back_file_ref,front_thumbnail=front_thumbnail_path, back_thumbnail=back_thumbnail_path, user_id=request.user.id)
                 detail_ref.save()
 
                 back_thumbnail_path = detail_ref.back_thumbnail.url if detail_ref.back_thumbnail else None
@@ -84,7 +98,8 @@ class ImageAPIVIEW(APIView):
                     detail_ref= Card_Details.objects.get(id=row_id)
                     detail_ref.front_image = front_file_ref
                     detail_ref.front_thumbnail = front_thumbnail_path
-                    detail_ref.status = 0
+                #    detail_ref.user_id = request.user.id
+                #    detail_ref.status = 0
                     detail_ref.save()
                     #detail_ref = Card_Details.objects.filter(id=row_id).update(front_image = front_file_ref,front_thumbnail = front_thumbnail_path, user_id=request.user.id)
                 else:
@@ -93,14 +108,14 @@ class ImageAPIVIEW(APIView):
                     detail_ref= Card_Details.objects.get(id=row_id)
                     detail_ref.back_image = back_file_ref
                     detail_ref.back_thumbnail = back_thumbnail_path
-                    detail_ref.status = 0
+                #    detail_ref.status = 0
                     detail_ref.save()
                     #detail_ref = Card_Details.objects.filter(id=row_id).update(back_image=back_file_ref,back_thumbnail=back_thumbnail_path, user_id=request.user.id)
                 back_thumbnail_path = detail_ref.back_thumbnail.url if detail_ref.back_thumbnail else None
                 front_thumbnail_path = detail_ref.front_thumbnail.url if detail_ref.front_thumbnail else None
                 res_dict = {
                     "id": detail_ref.id,
-                    "user_id": detail_ref.user.id,
+                    "user_id": detail_ref.user_id,
                     "back_thumbnail": back_thumbnail_path,
                     "front_thumbnail": front_thumbnail_path,
                 }
@@ -137,6 +152,7 @@ class DetailAPI(APIView):
                               ##status__status__exact
         if code_status==0:
             card=Card_Details.objects.filter(user_id=row_userid,status=code_status,is_deleted=0)
+            print(card)
             serializers=CompleteDataSerializer(card,many=True)
             # if serializers.is_valid():
             #     serializers.save()
@@ -148,7 +164,7 @@ class DetailAPI(APIView):
             #     serializers.save()
             return Response({'data':serializers.data,'message':'file fetched'}, status=status.HTTP_201_CREATED)
 
-# class savecarddetails(APIView):
+# class savecarddetails(APIView): Vignesh@1qaz
 #     permission_classes = (IsAuthenticated,)
 #     serializer_class = FormdataSerializers
 
@@ -315,3 +331,88 @@ class savecarddetails(APIView):
             'message' : serializer.data['message'],    
         }
         return Response(response)
+
+class signup(APIView):
+
+    permission_classes = (AllowAny,)
+    serializer_class = signupSerializer
+
+    def post(self, request):
+        serializer = signupSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        status_code = status.HTTP_200_OK
+        response = {
+            'success' : serializer.data['success'],
+            'message' : serializer.data['message'],   
+        }
+        return Response(response)
+
+class verifytoken(APIView):
+    
+    permission_classes = (AllowAny,)
+    serializer_class = verify_tokenserializer
+
+    def post(self, request):
+        print(request.data)
+        serializer = verify_tokenserializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        response = {
+            'success' : serializer.data['success'],
+            'message' : serializer.data['message'],
+            'status_code' : serializer.data['status_code'], 
+        }
+        return Response(response)
+
+# # class login(APIView):
+
+# #     permission_classes = (IsAuthenticated,)
+# #     serializer_class = loginserializer
+
+# #     def post(self, request):
+# #         serializer = loginserializer(data=request.data)
+# #         serializer.is_valid(raise_exception=True)
+# #         login
+# #         response = {
+# #             'status_code' : serializer.data['status_code'],
+# #             'message' : serializer.data['message'], 
+# #         }
+# #         return Response(response)
+
+class forget_password(APIView):
+
+    permission_classes = (IsAuthenticated,)
+    serializer_class = forgot_password_serializer
+
+    def post(self, request):
+        serializer = forgot_password_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        response ={
+            'status_code' : serializer.data['status_code'],
+            'message' : serializer.data['message'], 
+        }
+        return Response(response)
+
+class reset_password(APIView):
+
+    permission_classes = (IsAuthenticated,)
+    serializer_class = reset_password_serializer
+
+    def post(self, request):
+
+        serializer = reset_password_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        response ={
+            'status_code' : serializer.data['status_code'],
+            'message' : serializer.data['message'], 
+        }
+        return Response(response)
+
+class logout(APIView):
+
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, format=None):
+        
+        logout(request)
+        data = {'success': 'Sucessfully logged out'}
+        return Response(data=data, status=status.HTTP_200_OK)

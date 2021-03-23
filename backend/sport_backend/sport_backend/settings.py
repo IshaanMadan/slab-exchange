@@ -29,7 +29,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -68,6 +67,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+AUTHENTICATION_BACKENDS = (
+        'django.contrib.auth.backends.ModelBackend',
+    )
 
 ROOT_URLCONF = 'sport_backend.urls'
 
@@ -96,12 +98,10 @@ WSGI_APPLICATION = 'sport_backend.wsgi.application'
 AUTH_USER_MODEL = 'se_app.User_Details'
 DATABASES = {
     'default': {
-    'ENGINE': 'django.db.backends.mysql',
-    'NAME': 'slab',
-    'USER': 'slab',
-    'PASSWORD':'Slab@!123',
-    'HOST': '127.0.0.1',
-    'PORT': '3306',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'Card_Details',
+        'USER': 'root',
+        'PASSWORD':'8383937715',
     }
 }
 # Password validation
@@ -185,3 +185,14 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  
+MAILER_EMAIL_BACKEND = EMAIL_BACKEND  
+EMAIL_HOST = 'smtp.gmail.com'  
+EMAIL_HOST_PASSWORD = 'As@#1234'  
+EMAIL_HOST_USER = 'deepanshu.bansal@oodlestechnologies.com'
+EMAIL_PORT = 587 
+EMAIL_USE_TLS = True  
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+FRONT_END_URL = 'http://localhost:8000'
