@@ -7,4 +7,8 @@ prod_dict = {
     'url' : 'https://sandlot.cards/'
     }
 
-static_var = dev_dict
+uat = {
+    'url' : 'https://sandlot.cards/'
+  }
+
+static_var = prod_dict
