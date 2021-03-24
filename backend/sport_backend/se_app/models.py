@@ -86,7 +86,7 @@ class Card_Details(models.Model):
     user=models.ForeignKey(User_Details,on_delete=models.CASCADE,null=True,blank=True)
     status=models.BooleanField(null=True,blank=True,default=False)
     brand_name=models.CharField(max_length=255,null=True,blank=True)
-    card_number=models.CharField(max_length=255,unique=True,null=True,blank=True)
+    card_number=models.CharField(max_length=255,null=True,blank=True)
     certification=models.ForeignKey(Certifications,on_delete=models.CASCADE,max_length=255,null=True,blank=True)
     certification_number=models.CharField(max_length=255,null=True,blank=True)
     auto_grade=models.ForeignKey(Autograde,on_delete=models.CASCADE,max_length=255,null=True,blank=True)

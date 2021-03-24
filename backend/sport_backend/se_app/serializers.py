@@ -9,9 +9,10 @@ import re
 from itsdangerous import URLSafeTimedSerializer
 from django.conf import settings
 from django.core.mail import send_mail
+from .constants import *
 
 EMAIL_HOST_USER = settings.EMAIL_HOST_USER
-HOST = settings.FRONT_END_URL
+#HOST = settings.FRONT_END_URL
 SECRET_KEY = settings.SECRET_KEY
 
 JWT_PAYLOAD_HANDLER = api_settings.JWT_PAYLOAD_HANDLER
@@ -58,7 +59,6 @@ class UserLoginSerializer(serializers.Serializer):
             email=data.get("email",None)
             password=data.get("password",None)
 
-    #        import pdb; pdb.set_trace()
             if (User_Details.objects.filter(email=email).exists()):
                 user = User_Details.objects.filter(email=email).get()#,password=password).get()
             #    pass_word = user.password
@@ -223,13 +223,13 @@ class signupSerializer(serializers.Serializer):
                 if regexp.search(password):
                 
                     subject = 'Signup Verification'
-                    link = HOST + '/account-verify?token=' + generate_confirmation_token(email)
+                    link = static_var['url'] + '/account-verify?token=' + generate_confirmation_token(email)
                     message = ("Hello " + email  + ",\n\nPlease click on the following link to verify:\n")
                     email_send = send_mail(subject, message + link, EMAIL_HOST_USER, [email], fail_silently=False, )    
                     user = User_Details.objects.create_user(first_name=first_name,last_name=last_name,email=email,password=password)
                     user.save()
                     return {    
-                        'message':"Mail sent successfully",
+                        'message':"User registered successfully, Mail has been sent for verification",
                         'success':True,
                     #    'status_code':status.HTTP_200_OK,
                     }
@@ -274,7 +274,7 @@ class verify_tokenserializer(serializers.Serializer):
             user.is_verified = True
             user.save()
             return {    
-                    'message':"User created successfully",
+                    'message':"Account verified successfully",
                     'success':True,
                     'status_code':status.HTTP_200_OK,
                     }
@@ -358,7 +358,7 @@ class forgot_password_serializer(serializers.Serializer):
             }
         try:
             user = User_Details.objects.filter(email=email).get()
-            link = HOST + '/reset/' + generate_confirmation_token(user.email)
+            link = static_var['url'] + '/reset-password?token=' + generate_confirmation_token(user.email)
             if not link:
                 return{
                     'message':'The link has expired. Please click on forgot password to generate a new link',
@@ -366,10 +366,10 @@ class forgot_password_serializer(serializers.Serializer):
                 }
             subject = 'Reset Password'
             message = ("Hello " + user.name + ",\n\nPlease click on the following link to reset your password:\n")
-
+        #    email_send = send_mail(subject, message + link, EMAIL_HOST_USER, [user.email], fail_silently=False,)
             email_send = send_mail(subject, message + link, EMAIL_HOST_USER, [user.email], fail_silently=False,)
             return{
-                'messgae':'Recovery email sent successfully',
+                'message':'Recovery email sent successfully',
                 'status_code':status.HTTP_200_OK,
             }
             if not email_send:
@@ -379,13 +379,13 @@ class forgot_password_serializer(serializers.Serializer):
                 }
         except User_Details.DoesNotExist:
             return{
-                'messgae':'Sorry, this is not a registered email address. Please try again',
+                'message':'Sorry, this is not a registered email address. Please try again',
                 'email': user.email,
                 'status_code':status.HTTP_400_BAD_REQUEST,
             }
 
 class reset_password_serializer(serializers.Serializer):
-    token = serializers.CharField(max_length=255)
+    token = serializers.CharField(max_length=255,write_only=True)
     password = serializers.CharField(max_length=255,write_only=True)
     confirm_password = serializers.CharField(max_length=255,write_only=True)
 
@@ -401,10 +401,12 @@ class reset_password_serializer(serializers.Serializer):
         regexp = re.compile(r'^(?=.{8,})(?=.*[A-Z])(?=.*[@#$%^&+*!=]).*$')
 
         email = confirm_token(token)
+        print(email)
         if not email:
             return{
+                'success':'False',
                 'message':'Invalid Token.',
-                'status_code':status.HTTP_400_BAD_REQUEST,
+                'status_code': status.HTTP_403_FORBIDDEN,
                 }
         try:
             user = User_Details.objects.filter(email=email).get()
@@ -412,7 +414,12 @@ class reset_password_serializer(serializers.Serializer):
             if regexp.search(password):
                 if password == confirm_password:
                     user.set_password(password)
+    #                user.password=password
                     user.save()
+                    return{
+                        'message':'Password Changed Successfully.',
+                        'status_code':status.HTTP_200_OK,
+                    } 
             else:
                 return{
                     'message':'Password details not matched.',

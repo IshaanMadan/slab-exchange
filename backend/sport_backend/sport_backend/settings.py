@@ -27,7 +27,7 @@ SECRET_KEY = '$*qw5wcn+s+wmz-&^v3z+lz*!yqtvfqc^px=g0$9hs*-%6hcgj'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*',]
 
 # Application definition
 
@@ -98,12 +98,15 @@ WSGI_APPLICATION = 'sport_backend.wsgi.application'
 AUTH_USER_MODEL = 'se_app.User_Details'
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'Card_Details',
-        'USER': 'root',
-        'PASSWORD':'8383937715',
+    'ENGINE': 'django.db.backends.mysql',
+    'NAME': 'slab',
+    'USER': 'slab',
+    'PASSWORD':'Slab@!123',
+    'HOST': '127.0.0.1',
+    'PORT': '3306',
     }
 }
+
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
@@ -195,4 +198,4 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True  
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-FRONT_END_URL = 'http://localhost:8000'
+#FRONT_END_URL = 'https://localhost:4200'
