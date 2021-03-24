@@ -40,22 +40,26 @@ export class DataService {
     return this.http.post(environment.apiUrl + '/login', obj).pipe(
       tap((response: any) => {
         Swal.close();
+
         const user: User = {
           id: userData.id,
-          name: userData.name,
+          // name: userData.name,
+          // email: userData.email,
+          name: response.name,
           email: userData.email,
           // avatar: userData.photoUrl,
           jwtToken: response.jwttoken,
           authToken: userData.authToken,
         };
+
         this.handleSuccess(user, response.message);
       }),
       catchError((error) => {
         Swal.close();
-        const errMessage = 'Unable to login';
-        this.toastError(errMessage);
+        // const errMessage = 'Unable to login';
+        this.toastError(error?.error.message);
         this.router.navigate(['/']);
-        return throwError(errMessage);
+        return throwError(error?.error.message);
       })
     );
   }
@@ -71,15 +75,23 @@ export class DataService {
     return this.http.post(environment.apiUrl + `/user-signup`, obj).pipe(
       tap((response: any) => {
         Swal.close();
-        const user: User = {
-          id: userData.id,
-          name: userData.firstName + ' ' + userData.lastName,
-          email: userData.email,
-          // avatar: userData.photoUrl,
-          jwtToken: response.jwttoken,
-          authToken: userData.authToken,
-        };
-        this.handleSuccess(user, response.message);
+        // const user: User = {
+        //   id: userData.id,
+        //   name: userData.firstName + ' ' + userData.lastName,
+        //   email: userData.email,
+        //   // avatar: userData.photoUrl,
+        //   jwtToken: response.jwttoken,
+        //   authToken: userData.authToken,
+        // };
+        // this.handleSuccess(user, response.message);
+        if(response.success === "True"){
+          this.toastSuccess(response.message);
+          this.router.navigate(['/']);
+        }else{
+          this.toastError(response.message);
+          this.router.navigate(['/']);
+        }
+
       }),
       catchError((error) => {
         Swal.close();
@@ -108,6 +120,7 @@ export class DataService {
     } catch (e) {
       this.setUserData(null);
     }
+    // console.log(this.router.url)
   }
 
   getCardList(status: string = 'pending') {
@@ -276,7 +289,7 @@ export class DataService {
     );
   }
 
-  async forgotPassModal() {
+  async forgotPassModal(loginForm) {
     const { value: email } = await Swal.fire({
       title: 'Forgot Password?',
       html: `<p>If you have forgotten your password you can reset it here.
@@ -289,25 +302,27 @@ export class DataService {
 
     if (email) {
       // Swal.fire('Entered email: ' + email)
-      this.forgotPassword({ email: email }).subscribe();
+      this.forgotPassword(loginForm, { email: email }).subscribe();
     }
   }
 
-  forgotPassword(data) {
+  forgotPassword(loginForm:FormGroup ,data) {
     this.showLoader();
     console.log(data);
     return this.http.post(environment.apiUrl + '/forget-password', data).pipe(
       tap((response: any) => {
         Swal.close();
         this.toastSuccess(response.message);
+        loginForm.reset()
         this.router.navigate(['/']);
       }),
       catchError((error) => {
         Swal.close();
-        const errMessage = 'Something Went Wrong';
-        this.toastError(errMessage);
+        // const errMessage = 'Something Went Wrong';
+        this.toastError(error?.error.message);
+        loginForm.reset()
         this.router.navigate(['/']);
-        return throwError(errMessage);
+        return throwError(error?.error.message);
       })
     );
   }
@@ -326,10 +341,10 @@ export class DataService {
         catchError((error) => {
           Swal.close();
           data.reset();
-          const errMessage = 'Something Went Wrong';
-          this.toastError(errMessage);
+          // const errMessage = 'Something Went Wrong';
+          this.toastError(error?.error.message);
           this.router.navigate(['/']);
-          return throwError(errMessage);
+          return throwError(error?.error.message);
         })
       );
   }

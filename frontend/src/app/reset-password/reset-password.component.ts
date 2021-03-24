@@ -31,11 +31,10 @@ export class ResetPasswordComponent implements OnInit {
   ngOnInit(): void {
     this.token = this.route.snapshot.queryParamMap.get('token');
     // console.log(this.token);
-    if (this.token) {
-      this.initForm();
-    } else {
+    if (!this.token) {
       this.router.navigate(['']);
     }
+    this.initForm();
   }
 
   initForm() {

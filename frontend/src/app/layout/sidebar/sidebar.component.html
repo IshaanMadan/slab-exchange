@@ -1,16 +1,21 @@
 <!-- <div class="col-sm-2 side-upload vh_100"> -->
-  <p>MAIN</p>
+  <p class="mainTxt">MAIN</p>
   <div class="upload-btn-wrapper">
-    <button class="btn text-left hov_none marB10" [ngClass]="currentUrl == '/dashboard' ? '' : 'page_inactive'" (click)="navigateTo()" >
+    <button class="btn text-left hov_none marB10 sideBarBtn" [ngClass]="currentUrl == '/dashboard' ? '' : 'page_inactive'" (click)="navigateTo()" >
       <i class="fa fa-upload mR5" aria-hidden="true"></i>
       Upload
     </button>
-  </div>
-  <!--  -->
-  <div class="upload-btn-wrapper">
-    <button class="btn text-left hov_none marB10" [ngClass]="currentUrl == '/collections' ? '' : 'page_inactive'" (click)="navigateTo('collections')" >
+
+    <button class="btn text-left hov_none marB10 sideBarBtn" [ngClass]="currentUrl == '/collections' ? '' : 'page_inactive'" (click)="navigateTo('collections')" >
       <i class="fas fa-folder-open mR5"></i>
        Collections
     </button>
   </div>
+  <!--  -->
+  <!-- <div class="upload-btn-wrapper">
+    <button class="btn text-left hov_none marB10" [ngClass]="currentUrl == '/collections' ? '' : 'page_inactive'" (click)="navigateTo('collections')" >
+      <i class="fas fa-folder-open mR5"></i>
+       Collections
+    </button>
+  </div> -->
 <!-- </div> -->

@@ -70,6 +70,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   forgotPassClick(){
-    this.dataService.forgotPassModal()
+    this.dataService.forgotPassModal(this.loginForm)
   }
 }
