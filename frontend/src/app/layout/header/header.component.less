@@ -1,5 +1,5 @@
-.logo{
-  color: #37A56E;
+.logo {
+  color: #37a56e;
   font-weight: 600;
   // margin: auto;
   padding: 7px 0px;
@@ -7,41 +7,54 @@
   margin-bottom: 0px;
 }
 
-.dropdown:hover>.dropdown-menu {
+.dropdown:hover > .dropdown-menu {
   display: block;
 }
 
-.dropdown>.dropdown-toggle:active {
+.dropdown > .dropdown-toggle:active {
   /*Without this, clicking will make it sticky*/
-    pointer-events: none;
+  pointer-events: none;
 }
 
-.header{
-box-shadow: 0px 0px 6px #00000021;
-// .box-shadow();
-background: #fff;
-padding: 1.15rem 1.4em 1.15em 1.15em;
-#dropdownMenuButton {
-  border: none;
-  color: #545454;
-  background: none;
-  font-weight: 600;
-  padding: 10px 0px;
-  &:after {
-    border: none!important;
-    // font: normal normal normal 14px/1 FontAwesome;
-    content: "";
-    background : url(../../../assets/images/icon/arrow-down.png) no-repeat;
-    vertical-align: 0; /* to center vertically */
-    width: 17px;
-    height: 8px;
-    background-size: contain;
+.header {
+  box-shadow: 0px 0px 6px #00000021;
+  // .box-shadow();
+  background: #fff;
+  padding: 1.15rem 1.4em 1.15em 1.15em;
+  #dropdownMenuButton {
+    border: none;
+    color: #545454;
+    background: none;
+    font-weight: 600;
+    padding: 10px 0px;
+    &:after {
+      border: none !important;
+      // font: normal normal normal 14px/1 FontAwesome;
+      content: "";
+      background: url(../../../assets/images/icon/arrow-down.png) no-repeat;
+      vertical-align: 0; /* to center vertically */
+      width: 17px;
+      height: 8px;
+      background-size: contain;
+    }
   }
-}
 }
 
 .fix_position_right {
   top: 80% !important;
   left: inherit !important;
   right: 0 !important;
+}
+
+// for devices like iphone 5/se
+@media (max-width: 359px) {
+  .no_link {
+    margin-left: 30px !important;
+  }
+}
+
+@media (max-width: 576px) {
+.mobView {
+  margin-top: 15px !important
+}
 }

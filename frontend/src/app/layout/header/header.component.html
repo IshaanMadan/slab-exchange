@@ -1,8 +1,8 @@
 <div class="row header navbar-expand-sm sticky-top">
-  <div class="col-sm-6 col-8">
+  <div class="col-sm-6 col-6">
     <div class="row">
       <button
-        class="btn sticky-top hide-sm "
+        class="btn sticky-top hide-sm mobView"
         id="side-nav"
         data-toggle="collapse"
         href="#collapseExample"
@@ -15,19 +15,22 @@
       </a>
     </div>
   </div>
-  <div class="col-sm-6 col-4 pr-0">
+  <div class="col-sm-6 col-6 pr-0">
     <div class="dropdown float-right">
       <button
-        class="dropdown-toggle"
+        class="dropdown-toggle mobView"
         type="button"
         id="dropdownMenuButton"
         data-toggle="dropdown"
         aria-haspopup="true"
         aria-expanded="false"
       >
-        {{ userData.name }}
+        <span>{{ userName }}</span>
       </button>
-      <div class="dropdown-menu fix_position_right" aria-labelledby="dropdownMenuButton">
+      <div
+        class="dropdown-menu fix_position_right"
+        aria-labelledby="dropdownMenuButton"
+      >
         <a class="dropdown-item c-pointer" (click)="logout()">Logout</a>
       </div>
     </div>
