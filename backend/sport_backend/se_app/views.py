@@ -27,27 +27,84 @@ class UserLoginView(APIView):
 
     def post(self, request):
 
-        email=request.data['email']
-        print(email)
-        password=request.data['password']
-        print(password)
-        if (User_Details.objects.filter(email= email).exists()):
-            user=User_Details.objects.filter(email = email).get()
-            print(user)
-     #        user=authenticate(user)
-            login(request,user)
+    #    import pdb; pdb.set_trace()
+
+        login_type=request.data['login_type']
+
+        if login_type=='FACEBOOK':
+            
+            name = request.data['name']
             serializer = UserLoginSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
-    #    login(request,)
-        
             response = {
-                'success' : 'True',
-                'status_code' : status.HTTP_200_OK,
-                'message': 'User logged in  successfully',
-                'jwttoken' : serializer.data['jwttoken'],
-             }
-            status_code = status.HTTP_200_OK
-            return Response(response, status=status_code)
+                 'success' : 'True',
+                 'name' : name,
+                 'message': 'User logged in  successfully',
+                 'jwttoken' : serializer.data['jwttoken'],
+              }
+            return Response(response, status = status.HTTP_200_OK)
+        else:
+
+            email=request.data['email']
+            password=request.data['password']
+        #   user = User_Details.objects.filter(email=email,password=password).get()
+            data = User_Details.objects.filter(email=email).get()
+            fname=data.first_name
+            lname=data.last_name
+            user = authenticate(email=email,password=password)
+            if user is not None:
+                login(request,user)
+                serializer = UserLoginSerializer(data=request.data)
+                serializer.is_valid(raise_exception=True) 
+                response = {
+                    'success' : 'True',
+                    'email' : email,
+                    'name' : fname+' '+lname,
+                    'message': 'User logged in  successfully',
+                    'jwttoken' : serializer.data['jwttoken'],
+                }
+                return Response(response, status = status.HTTP_200_OK)
+            else:
+                response = {
+                    'success' : 'False',
+                    
+                    'message': 'email or password is incorrect. Please try again'
+                }
+                return Response(response, status = status.HTTP_403_FORBIDDEN)
+
+
+            
+    #    password=request.data['password']
+     #   print(password)
+
+    #     if (User_Details.objects.filter(email= email).exists()):
+    #         user=User_Details.objects.filter(email = email).get()
+            
+    # #        user=authenticate(user)
+    # #        login(request,user)
+    #         serializer = UserLoginSerializer(data=request.data)
+    #         serializer.is_valid(raise_exception=True)
+    # #    login(request,)
+        
+    #         response = {
+    #             'success' : 'True',
+    #             'status_code' : status.HTTP_200_OK,
+    #             'message': 'User logged in  successfully',
+    #             'jwttoken' : serializer.data['jwttoken'],
+    #          }
+    #         status_code = status.HTTP_200_OK
+    #     #    return Response(response, status=status_code)
+    #     else:
+    #         print('yes')
+    #         serializer = UserLoginSerializer(data=request.data)
+    #         serializer.is_valid(raise_exception=True)
+    #         response = {
+    #             'success' : 'True',
+    #             'status_code' : status.HTTP_200_OK,
+    #             'message': 'User logged in  successfully',
+    #             'jwttoken' : serializer.data['jwttoken'],
+    #          }
+    #     return Response(response)
 
 
 class ImageAPIVIEW(APIView):
@@ -358,10 +415,9 @@ class verifytoken(APIView):
         serializer.is_valid(raise_exception=True)
         response = {
             'success' : serializer.data['success'],
-            'message' : serializer.data['message'],
-            'status_code' : serializer.data['status_code'], 
-        }
-        return Response(response)
+            'message' : serializer.data['message'], 
+           }
+        return Response(response,status=serializer.data['status_code'])
 
 # # class login(APIView):
 
@@ -380,7 +436,7 @@ class verifytoken(APIView):
 
 class forget_password(APIView):
 
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
     serializer_class = forgot_password_serializer
 
     def post(self, request):
@@ -390,11 +446,11 @@ class forget_password(APIView):
             'status_code' : serializer.data['status_code'],
             'message' : serializer.data['message'], 
         }
-        return Response(response)
+        return Response(response,status=serializer.data['status_code'])
 
 class reset_password(APIView):
 
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
     serializer_class = reset_password_serializer
 
     def post(self, request):
@@ -405,7 +461,7 @@ class reset_password(APIView):
             'status_code' : serializer.data['status_code'],
             'message' : serializer.data['message'], 
         }
-        return Response(response)
+        return Response(response,status = serializer.data['status_code'])
 
 class logout(APIView):
 
