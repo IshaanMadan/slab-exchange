@@ -47,8 +47,8 @@ class UserLoginView(APIView):
 
             email=request.data['email']
             password=request.data['password']
-        #   user = User_Details.objects.filter(email=email,password=password).get()
-            data = User_Details.objects.filter(email=email).get()
+        #   user = Users.objects.filter(email=email,password=password).get()
+            data = Users.objects.filter(email=email).get()
             fname=data.first_name
             lname=data.last_name
             user = authenticate(email=email,password=password)
@@ -71,40 +71,6 @@ class UserLoginView(APIView):
                     'message': 'email or password is incorrect. Please try again'
                 }
                 return Response(response, status = status.HTTP_403_FORBIDDEN)
-
-
-            
-    #    password=request.data['password']
-     #   print(password)
-
-    #     if (User_Details.objects.filter(email= email).exists()):
-    #         user=User_Details.objects.filter(email = email).get()
-            
-    # #        user=authenticate(user)
-    # #        login(request,user)
-    #         serializer = UserLoginSerializer(data=request.data)
-    #         serializer.is_valid(raise_exception=True)
-    # #    login(request,)
-        
-    #         response = {
-    #             'success' : 'True',
-    #             'status_code' : status.HTTP_200_OK,
-    #             'message': 'User logged in  successfully',
-    #             'jwttoken' : serializer.data['jwttoken'],
-    #          }
-    #         status_code = status.HTTP_200_OK
-    #     #    return Response(response, status=status_code)
-    #     else:
-    #         print('yes')
-    #         serializer = UserLoginSerializer(data=request.data)
-    #         serializer.is_valid(raise_exception=True)
-    #         response = {
-    #             'success' : 'True',
-    #             'status_code' : status.HTTP_200_OK,
-    #             'message': 'User logged in  successfully',
-    #             'jwttoken' : serializer.data['jwttoken'],
-    #          }
-    #     return Response(response)
 
 
 class ImageAPIVIEW(APIView):
@@ -136,7 +102,7 @@ class ImageAPIVIEW(APIView):
                     front_file_ref, back_file_ref = None, file_ref
                     front_thumbnail_path , back_thumbnail_path  = None, create_thumbnail(is_front,file_ref)                     
                 
-                detail_ref = Card_Details(front_image=front_file_ref, back_image=back_file_ref,front_thumbnail=front_thumbnail_path, back_thumbnail=back_thumbnail_path, user_id=request.user.id)
+                detail_ref = UserCards(front_image=front_file_ref, back_image=back_file_ref,front_thumbnail=front_thumbnail_path, back_thumbnail=back_thumbnail_path, user_id=request.user.id)
                 detail_ref.save()
 
                 back_thumbnail_path = detail_ref.back_thumbnail.url if detail_ref.back_thumbnail else None
@@ -152,22 +118,22 @@ class ImageAPIVIEW(APIView):
                 if is_front:
                     front_file_ref, back_file_ref = file_ref, None
                     front_thumbnail_path , back_thumbnail_path = create_thumbnail(is_front,file_ref), None
-                    detail_ref= Card_Details.objects.get(id=row_id)
+                    detail_ref= UserCards.objects.get(id=row_id)
                     detail_ref.front_image = front_file_ref
                     detail_ref.front_thumbnail = front_thumbnail_path
                 #    detail_ref.user_id = request.user.id
                 #    detail_ref.status = 0
                     detail_ref.save()
-                    #detail_ref = Card_Details.objects.filter(id=row_id).update(front_image = front_file_ref,front_thumbnail = front_thumbnail_path, user_id=request.user.id)
+                    #detail_ref = UserCards.objects.filter(id=row_id).update(front_image = front_file_ref,front_thumbnail = front_thumbnail_path, user_id=request.user.id)
                 else:
                     front_file_ref, back_file_ref = None, file_ref
                     front_thumbnail_path , back_thumbnail_path  = None, create_thumbnail(is_front,file_ref)
-                    detail_ref= Card_Details.objects.get(id=row_id)
+                    detail_ref= UserCards.objects.get(id=row_id)
                     detail_ref.back_image = back_file_ref
                     detail_ref.back_thumbnail = back_thumbnail_path
                 #    detail_ref.status = 0
                     detail_ref.save()
-                    #detail_ref = Card_Details.objects.filter(id=row_id).update(back_image=back_file_ref,back_thumbnail=back_thumbnail_path, user_id=request.user.id)
+                    #detail_ref = UserCards.objects.filter(id=row_id).update(back_image=back_file_ref,back_thumbnail=back_thumbnail_path, user_id=request.user.id)
                 back_thumbnail_path = detail_ref.back_thumbnail.url if detail_ref.back_thumbnail else None
                 front_thumbnail_path = detail_ref.front_thumbnail.url if detail_ref.front_thumbnail else None
                 res_dict = {
@@ -208,14 +174,14 @@ class DetailAPI(APIView):
             code_status=1                 
                               ##status__status__exact
         if code_status==0:
-            card=Card_Details.objects.filter(user_id=row_userid,status=code_status,is_deleted=0)
+            card=UserCards.objects.filter(user_id=row_userid,status=code_status,is_deleted=0)
             print(card)
             serializers=CompleteDataSerializer(card,many=True)
             # if serializers.is_valid():
             #     serializers.save()
             return Response({'data':serializers.data},status=status.HTTP_201_CREATED)
         else:
-            card=Card_Details.objects.filter(user_id=row_userid,status=code_status,is_deleted=0)
+            card=UserCards.objects.filter(user_id=row_userid,status=code_status,is_deleted=0)
             serializers=CompleteDataSerializer(card,many=True)
             # if serializers.is_valid():
             #     serializers.save()
@@ -243,7 +209,7 @@ class DetailAPI(APIView):
 
 #         try:
 #             if card_id==None:
-#                 Card_Details.objects.create(category_id=category,card_grade_id=card_grade,player_name=player_name,brand_name=brand_name,
+#                 UserCards.objects.create(category_id=category,card_grade_id=card_grade,player_name=player_name,brand_name=brand_name,
 #                                         card_number=card_number,certification_id=certification,certification_number=certification_number,
 #                                         year=year,auto_grade_id=auto_grade,autographed=autographed,status=True,user_id=userid,is_deleted=False)
 
@@ -337,13 +303,13 @@ class Deletecard(APIView):
         #card_id = request.data('card_id')
         messages.warning(request, 'Are you sure you want to delete ?')
         try:
-            card=Card_Details.objects.filter(id=card_id).get()
+            card=UserCards.objects.filter(id=card_id).get()
             #final_path = os.path.join(settings.MEDIA_ROOT, thumbnail_dir_name, file)
             anonymous_user_id=card.user_id
             authenticate_user_id= request.user.id
             if(anonymous_user_id==authenticate_user_id):
-                if(Card_Details.objects.filter(id=card_id).exists()):
-                    Card = Card_Details.objects.filter(id=card_id).get()
+                if(UserCards.objects.filter(id=card_id).exists()):
+                    Card = UserCards.objects.filter(id=card_id).get()
                     Card.is_deleted = True
                     Card.save()
                 # Card_Details.objects.filter(id=card_id).delete()
@@ -379,7 +345,7 @@ class savecarddetails(APIView):
 
         serializer = FormdataSerializers(data=request.data)
         serializer.is_valid(raise_exception=True)
-        Card=Card_Details.objects.filter(card_number=request.data['card_number']).get()
+        Card=UserCards.objects.filter(card_number=request.data['card_number']).get()
         Card.user_id=request.user.id
         Card.save()
         response = {
@@ -415,9 +381,10 @@ class verifytoken(APIView):
         serializer.is_valid(raise_exception=True)
         response = {
             'success' : serializer.data['success'],
-            'message' : serializer.data['message'], 
-           }
-        return Response(response,status=serializer.data['status_code'])
+            'message' : serializer.data['message'],
+            'status_code' : serializer.data['status_code'], 
+        }
+        return Response(response)
 
 # # class login(APIView):
 
@@ -446,7 +413,7 @@ class forget_password(APIView):
             'status_code' : serializer.data['status_code'],
             'message' : serializer.data['message'], 
         }
-        return Response(response,status=serializer.data['status_code'])
+        return Response(response)
 
 class reset_password(APIView):
 
@@ -457,11 +424,12 @@ class reset_password(APIView):
 
         serializer = reset_password_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        status_code = serializer.data['status_code']
         response ={
             'status_code' : serializer.data['status_code'],
             'message' : serializer.data['message'], 
         }
-        return Response(response,status = serializer.data['status_code'])
+        return Response(response,status=status_code)
 
 class logout(APIView):
 

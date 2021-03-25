@@ -38,16 +38,16 @@ class UserLoginSerializer(serializers.Serializer):
             email = data.get("email", None)
             name = data.get("name", None)
             auth_token = data.get("authToken", None)
-            if(User_Details.objects.filter(email=email).exists()):
-                data=User_Details.objects.filter(email=email).get()
+            if(Users.objects.filter(email=email).exists()):
+                data=Users.objects.filter(email=email).get()
                 data.authToken=auth_token
                 data.save()
                 payload = JWT_PAYLOAD_HANDLER(data)
                 jwt_token = JWT_ENCODE_HANDLER(payload)
             # update_last_login(None, user)
             else:
-                User_Details.objects.create(email=email,name=name)   #authToken=auth_token
-                data=User_Details.objects.filter(email=email).get()
+                Users.objects.create(email=email,first_name=name)   #authToken=auth_token
+                data=Users.objects.filter(email=email).get()
                 payload = JWT_PAYLOAD_HANDLER(data)
                 jwt_token = JWT_ENCODE_HANDLER(payload)
             return {
@@ -59,8 +59,8 @@ class UserLoginSerializer(serializers.Serializer):
             email=data.get("email",None)
             password=data.get("password",None)
 
-            if (User_Details.objects.filter(email=email).exists()):
-                user = User_Details.objects.filter(email=email).get()#,password=password).get()
+            if (Users.objects.filter(email=email).exists()):
+                user = Users.objects.filter(email=email).get()#,password=password).get()
             #    pass_word = user.password
             #    email = user.email
 
@@ -97,18 +97,18 @@ class UserLoginSerializer(serializers.Serializer):
 
 # class ImageSerializers(serializers.ModelSerializer):
 #     class Meta:
-#         model=Card_Details
+#         model=UserCards
 #         fields=('id',)
 
 # class FormSerializers(serializers.ModelSerializer):
 #     class Meta:
-#         model=Card_Details
+#         model=UserCards
 #         fields=('category','player_name','user','status','brand_name','card_number','certification'
 #                 'certification_number','auto_grade','card_grade','year','autographed')
 
 class CompleteDataSerializer(serializers.ModelSerializer):
     class Meta:
-        model=Card_Details
+        model=UserCards
         fields='__all__'
 
 # class CompleteDataSerializerNew(serializers.ModelSerializer):
@@ -151,7 +151,7 @@ class FormdataSerializers(serializers.Serializer):
         autographed=data.get("autographed",None)
         try:
             if card_id == None:
-                Card_Details.objects.create(category_id=category,card_grade_id=card_grade,player_name=player_name,brand_name=brand_name,
+                UserCards.objects.create(category_id=category,card_grade_id=card_grade,player_name=player_name,brand_name=brand_name,
                                         card_number=card_number,certification_id=certification,certification_number=certification_number,
                                         year=year,auto_grade_id=auto_grade,autographed=autographed,status=True)
 
@@ -161,8 +161,8 @@ class FormdataSerializers(serializers.Serializer):
                     'status_code':status.HTTP_200_OK,
                 }
             else:
-                if(Card_Details.objects.filter(id=card_id).exists()):
-                    data=Card_Details.objects.filter(id=card_id).get()
+                if(UserCards.objects.filter(id=card_id).exists()):
+                    data=UserCards.objects.filter(id=card_id).get()
                     data.category_id=category
                     data.player_name=player_name
                 #data.status=status
@@ -214,7 +214,7 @@ class signupSerializer(serializers.Serializer):
 
         regexp = re.compile(r'^(?=.{8,})(?=.*[A-Z])(?=.*[@#$%^&+*!=]).*$')
         try:
-            if (User_Details.objects.filter(email=email).exists()):
+            if (Users.objects.filter(email=email).exists()):
                 return {
                     'message':"email already exists..!!",
                     'success':False,
@@ -226,7 +226,7 @@ class signupSerializer(serializers.Serializer):
                     link = static_var['url'] + '/account-verify?token=' + generate_confirmation_token(email)
                     message = ("Hello " + email  + ",\n\nPlease click on the following link to verify:\n")
                     email_send = send_mail(subject, message + link, EMAIL_HOST_USER, [email], fail_silently=False, )    
-                    user = User_Details.objects.create_user(first_name=first_name,last_name=last_name,email=email,password=password)
+                    user = Users.objects.create_user(first_name=first_name,last_name=last_name,email=email,password=password)
                     user.save()
                     return {    
                         'message':"User registered successfully, Mail has been sent for verification",
@@ -270,7 +270,7 @@ class verify_tokenserializer(serializers.Serializer):
                 'success':False,
             }
         else:
-            user = User_Details.objects.filter(email=email).get()
+            user = Users.objects.filter(email=email).get()
             user.is_verified = True
             user.save()
             return {    
@@ -283,12 +283,12 @@ class verify_tokenserializer(serializers.Serializer):
 
 class categorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Card_Category
+        model = CardCategories
         fields = '__all__'
 
 class CardgradeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Cardgrade
+        model = CardGrades
         fields = '__all__'
 
 class certificationSerializer(serializers.ModelSerializer):
@@ -298,7 +298,7 @@ class certificationSerializer(serializers.ModelSerializer):
 
 class AutogradeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Autograde
+        model = AutoGrades
         fields = '__all__'
 
 # class loginserializer(serializers.Serializer):
@@ -350,14 +350,14 @@ class forgot_password_serializer(serializers.Serializer):
     def validate(self,data):
 
         email=data.get('email',None)
-        user = User_Details.objects.filter(email=email).exists()
+        user = Users.objects.filter(email=email).exists()
         if not user:
             return{
                 'message':'Sorry, this is not a registered email address. Please try again',
                 'status_code':status.HTTP_404_NOT_FOUND,
             }
         try:
-            user = User_Details.objects.filter(email=email).get()
+            user = Users.objects.filter(email=email).get()
             link = static_var['url'] + '/reset-password?token=' + generate_confirmation_token(user.email)
             if not link:
                 return{
@@ -365,7 +365,7 @@ class forgot_password_serializer(serializers.Serializer):
                     'status_code':status.HTTP_204_NO_CONTENT,
                 }
             subject = 'Reset Password'
-            message = ("Hello " + user.name + ",\n\nPlease click on the following link to reset your password:\n")
+            message = ("Hello " + user.first_name + ",\n\nPlease click on the following link to reset your password:\n")
         #    email_send = send_mail(subject, message + link, EMAIL_HOST_USER, [user.email], fail_silently=False,)
             email_send = send_mail(subject, message + link, EMAIL_HOST_USER, [user.email], fail_silently=False,)
             return{
@@ -377,7 +377,7 @@ class forgot_password_serializer(serializers.Serializer):
                     'message':'Recovery Email Failed',
                     'status_code':status.HTTP_400_BAD_REQUEST,
                 }
-        except User_Details.DoesNotExist:
+        except Users.DoesNotExist:
             return{
                 'message':'Sorry, this is not a registered email address. Please try again',
                 'email': user.email,
@@ -409,7 +409,7 @@ class reset_password_serializer(serializers.Serializer):
                 'status_code': status.HTTP_403_FORBIDDEN,
                 }
         try:
-            user = User_Details.objects.filter(email=email).get()
+            user = Users.objects.filter(email=email).get()
             # user.set_password(password)
             if regexp.search(password):
                 if password == confirm_password:

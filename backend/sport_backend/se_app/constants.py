@@ -11,4 +11,4 @@ uat = {
     'url' : 'https://sandlot.cards/'
   }
 
-static_var = prod_dict
+static_var = dev_dict

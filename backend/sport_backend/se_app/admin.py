@@ -1,11 +1,11 @@
 from django.contrib import admin
 from se_app.models import *
-admin.site.register(User_Details)
-admin.site.register(Card_Category)
+admin.site.register(Users)
+admin.site.register(CardCategories)
 admin.site.register(Certifications)
-admin.site.register(Autograde)
-admin.site.register(Cardgrade)
-admin.site.register(Card_Details)
+admin.site.register(AutoGrades)
+admin.site.register(CardGrades)
+admin.site.register(UserCards)
 
 
 
