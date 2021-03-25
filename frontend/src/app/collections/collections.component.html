@@ -1,268 +1,433 @@
 <div class="row right-upload">
-  <div  class="col-sm-9 col-9">
-  </div>
+  <div class="col-sm-9 col-9"></div>
   <div class="col-sm-3 col-3 text-right pr-0">
-    <label href="#" id="open-all" *ngIf="!allExpandState" (click)="allExpandState = true" class="tab-open" style="cursor: pointer;">Open all</label>
-    <label href="#" id="open-all" *ngIf="allExpandState" (click)="allExpandState = false" class="tab-open" style="cursor: pointer;">Collapse all</label>
+    <label
+      href="#"
+      id="open-all"
+      *ngIf="!allExpandState"
+      (click)="allExpandState = true"
+      class="tab-open"
+      style="cursor: pointer"
+      >Open all</label
+    >
+    <label
+      href="#"
+      id="open-all"
+      *ngIf="allExpandState"
+      (click)="allExpandState = false"
+      class="tab-open"
+      style="cursor: pointer"
+      >Collapse all</label
+    >
   </div>
 </div>
 
 <div class="row">
-<div class="accordian col-sm-12">
-  <div class="col">
-    <div class="center_text" *ngIf="!collectionList.length">
-      <p class="font-bold" > No cards found </p>
-    </div>
-    <div class="tabs marB15" *ngFor="let card of collectionList; let i = index">
-      <div class="tab">
-        <div>
-          <mat-accordion>
-            <mat-expansion-panel [expanded]="allExpandState">
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  <span class="font-bold">
-                    {{card.year}}
-                    {{card.brand_name}}
-                    {{card.player_name}}
-                    #{{card.card_number}}
-                    {{card.certification_label}}
-                    {{card.card_grade_label}}
-                    {{card.autographed ? 'Autographed' : ''}}
-
-                  </span>
-                  <a id="delete" (click)="deleteCard(i)"><img src="assets/images/icon/delete.png" /></a>
-                </mat-panel-title>
-                <mat-panel-description>
-                </mat-panel-description>
-              </mat-expansion-panel-header>
-              <!-- Card Content Here -->
-              <ng-template matExpansionPanelContent>
-                <div class="row border_top">
-                  <div class="col-sm-3 upload-front">
-                    <div class="image_icon_fix">
-                      <div class="upload-btn-wrapper" [ngClass]="{
-                        'rmrf_border': card.front_thumbnail
-                      }">
-                        <img
-                        *ngIf="card.front_thumbnail"
-                        class="preview_image"
-                        src="{{imageUrl}}{{card.front_thumbnail}}"
-                        alt="Front Image of Card"
+  <div class="accordian col-sm-12">
+    <div class="col">
+      <div class="center_text" *ngIf="!collectionList.length">
+        <p class="font-bold">No cards found</p>
+      </div>
+      <div
+        class="tabs marB15"
+        *ngFor="let card of collectionList; let i = index"
+      >
+        <div class="tab">
+          <div>
+            <mat-accordion>
+              <mat-expansion-panel [expanded]="allExpandState">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    <span class="font-bold wordWraping">
+                      {{ card.year }}
+                      {{ card.brand_name }}
+                      {{ card.player_name }}
+                      #{{ card.card_number }}
+                      {{ card.certification_label }}
+                      {{ card.card_grade_label }}
+                      {{ card.autographed ? "Autographed" : "" }}
+                    </span>
+                    <a id="delete" (click)="deleteCard(i)"
+                      ><img src="assets/images/icon/delete.png"
+                    /></a>
+                  </mat-panel-title>
+                  <mat-panel-description> </mat-panel-description>
+                </mat-expansion-panel-header>
+                <!-- Card Content Here -->
+                <ng-template matExpansionPanelContent>
+                  <div class="row border_top">
+                    <div class="col-sm-3 upload-front">
+                      <div class="image_icon_fix">
+                        <div
+                          class="upload-btn-wrapper"
+                          [ngClass]="{
+                            rmrf_border: card.front_thumbnail
+                          }"
                         >
-                        <button class="btn text-left" *ngIf="!card.front_thumbnail && editCardId == card.id">
-                          <img src="assets/images/icon/upload.png" /> Upload
-                          Front
-                        </button>
-                        <input type="file"
-                               name="myfile"
-                               accept="image/*"
-                               attr.id="image_upload_front{{i}}"
-                               (change)="imageUploaded($event, i, true)" />
-                      </div>
-
-                      <!-- Edit Icon -->
-                      <i
-                      *ngIf="card.front_thumbnail && editCardId == card.id"
-                      (click)="changeImage(i,'front')"
-                      class="fas fa-pen edit_icon"
-                      ></i>
-
-                    </div>
-                    <div class="image_icon_fix">
-                      <div class="upload-btn-wrapper"
-                      [ngClass]="{
-                        'rmrf_border': card.back_thumbnail
-                      }"
-                      >
-                        <img
-                        *ngIf="card.back_thumbnail"
-                        class="preview_image"
-                        src="{{imageUrl}}{{card.back_thumbnail}}"
-                        alt="Back Image of Card"
-                        >
-                        <button class="btn text-left" *ngIf="!card.back_thumbnail && editCardId == card.id">
-                          <img src="assets/images/icon/upload.png" /> Upload
-                          Back
-                        </button>
-                        <input type="file"
-                               name="myfile"
-                               accept="image/*"
-                               attr.id="image_upload_back{{i}}"
-                               (change)="imageUploaded($event, i, null)" />
-                        </div>
-
-                      <!-- Edit Icon -->
-                       <i
-                       *ngIf="card.back_thumbnail && editCardId == card.id"
-                       (click)="changeImage(i,'back')"
-                       class="fas fa-pen edit_icon"
-                       ></i>
-                    </div>
-                  </div>
-                  <div class="col-sm-8 form-template">
-                    <div class="row">
-                      <div class="col-sm-6">
-                        <div class="form-group selector">
-                          <label for="sel1">Category: </label>
-                          <span class="font-bold" *ngIf="editCardId !== card.id"> {{card.category_label}} </span>
-                          <select [(ngModel)]="card.category" *ngIf="editCardId == card.id" class="form-control">
-                            <option disabled value="null">Please select</option>
-                            <option *ngFor="let item of dropdownList?.category" value="{{item.id}}"> {{item.category_name}} </option>
-                          </select>
-                          <i class="fa fa-chevron-down" *ngIf="editCardId == card.id" ></i>
-                        </div>
-                      </div>
-                      <div class="col-sm-6"></div>
-                      <div class="col-sm-6">
-                        <div class="form-group">
-                          <label for="exampleInputEmail1">Year: </label>
-                          <span *ngIf="editCardId != card.id" class="font-bold"> {{card.year}} </span>
-                          <select
-                            *ngIf="editCardId == card.id"
-                            class="form-control"
-                            [(ngModel)]="card.year"
-                            >
-                              <option disabled value="null">Please select</option>
-                              <option *ngFor="let year of years;" value="{{year}}"> {{year}} </option>
-                          </select>
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="form-group">
-                          <label for="exampleInputEmail1">Brand Name: </label>
-                          <span *ngIf="editCardId !== card.id" class="font-bold"> {{card.brand_name}} </span>
-                          <input
-                            *ngIf="editCardId == card.id"
-                            type="text"
-                            class="form-control"
-                            id="exampleInputEmail1"
-                            aria-describedby="emailHelp"
-                            placeholder="Enter Brand Name"
-                            [(ngModel)]="card.brand_name"
+                          <img
+                            *ngIf="card.front_thumbnail"
+                            class="preview_image"
+                            src="{{ imageUrl }}{{ card.front_thumbnail }}"
+                            alt="Front Image of Card"
+                            lightbox
+                            [fullImage]="{ path: imageUrl + card.front_image }"
+                            [ngStyle]="{
+                              transform: 'scale(' + scale / 100 + ')',
+                              'transform-origin': left + 'px ' + top + 'px'
+                            }"
                           />
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="form-group">
-                          <label for="exampleInputEmail1">Player Name: </label>
-                          <span class="font-bold" *ngIf="editCardId !== card.id"> {{card.player_name}} </span>
-                          <input
-                            *ngIf="editCardId == card.id"
-                            type="email"
-                            class="form-control"
-                            id="exampleInputEmail1"
-                            aria-describedby="emailHelp"
-                            placeholder="Enter Player Name"
-                            [(ngModel)]="card.player_name"
-                          />
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="form-group">
-                          <label for="exampleInputEmail1">Card Number: </label>
-                          <span class="font-bold" *ngIf="editCardId !== card.id"> {{card.card_number}} </span>
-                          <input
-                           *ngIf="editCardId == card.id"
-                            type="email"
-                            class="form-control"
-                            id="exampleInputEmail1"
-                            aria-describedby="emailHelp"
-                            placeholder="Enter Card Number"
-                            [(ngModel)]="card.card_number"
-                          />
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="form-group selector">
-                          <label for="sel1">Certification: </label>
-                          <span class="font-bold" *ngIf="editCardId !== card.id"> {{card.certification_label}} </span>
-                          <select *ngIf="editCardId == card.id" class="form-control" [(ngModel)]="card.certification" >
-                            <option disabled value="null">Please select</option>
-                            <option *ngFor="let item of dropdownList?.certification" value="{{item.id}}"> {{item.certificate_name}} </option>
-                          </select>
-                          <i *ngIf="editCardId == card.id" class="fa fa-chevron-down"></i>
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="form-group selector">
-                          <label for="sel1">Card Grade: </label>
-                          <span class="font-bold" *ngIf="editCardId !== card.id"> {{card.card_grade_label}} </span>
-                          <select *ngIf="editCardId == card.id" class="form-control" [(ngModel)]="card.card_grade" >
-                            <option disabled value="null">Please select</option>
-                            <option *ngFor="let item of dropdownList?.card_grade" value="{{item.id}}"> {{item.card_grade_name}} </option>
-                          </select>
-                          <i class="fa fa-chevron-down" *ngIf="editCardId == card.id"></i>
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="form-group">
-                          <label for="exampleInputEmail1"
-                            >Certification Number: </label
+                          <button
+                            class="btn text-left"
+                            *ngIf="
+                              !card.front_thumbnail && editCardId == card.id
+                            "
                           >
-                          <span class="font-bold" *ngIf="editCardId !== card.id"> {{card.certification_number}} </span>
+                            <img src="assets/images/icon/upload.png" /> Upload
+                            Front
+                          </button>
                           <input
                             *ngIf="editCardId == card.id"
-                            type="email"
-                            class="form-control"
-                            id="exampleInputEmail1"
-                            aria-describedby="emailHelp"
-                            placeholder="Enter Certification Number"
-                            [(ngModel)]="card.certification_number"
+                            type="file"
+                            name="myfile"
+                            accept="image/*"
+                            attr.id="image_upload_front{{ i }}"
+                            (change)="imageUploaded($event, i, true)"
                           />
                         </div>
-                      </div>
-                      <div class="col-sm-6"></div>
 
-                      <div class="col-sm-6">
-                        <div class="form-group">
-                          <label>Autographed: </label>
-                          <span class="font-bold" *ngIf="editCardId !== card.id"> {{card.autographed ? 'YES' : 'NO'}} </span>
-                          <div class="row check-box" *ngIf="editCardId == card.id">
-                            <div class="form-check-inline">
-                              <label class="form-check-label">
-                                <input
-                                  type="checkbox"
-                                  class="form-check-input"
-                                  value=""
-                                  [checked]="card.autographed"
-                                  (click)="card.autographed = true"
+                        <!-- Edit Icon -->
+                        <i
+                          *ngIf="card.front_thumbnail && editCardId == card.id"
+                          (click)="changeImage(i, 'front')"
+                          class="fas fa-pen edit_icon"
+                        ></i>
+                      </div>
+                      <div class="image_icon_fix">
+                        <div
+                          class="upload-btn-wrapper"
+                          [ngClass]="{
+                            rmrf_border: card.back_thumbnail
+                          }"
+                        >
+                          <img
+                            *ngIf="card.back_thumbnail"
+                            class="preview_image"
+                            src="{{ imageUrl }}{{ card.back_thumbnail }}"
+                            alt="Back Image of Card"
+                            lightbox
+                            [fullImage]="{ path: imageUrl + card.back_image }"
+                          />
+                          <button
+                            class="btn text-left"
+                            *ngIf="
+                              !card.back_thumbnail && editCardId == card.id
+                            "
+                          >
+                            <img src="assets/images/icon/upload.png" /> Upload
+                            Back
+                          </button>
+                          <input
+                            *ngIf="editCardId == card.id"
+                            type="file"
+                            name="myfile"
+                            accept="image/*"
+                            attr.id="image_upload_back{{ i }}"
+                            (change)="imageUploaded($event, i, null)"
+                          />
+                        </div>
+
+                        <!-- Edit Icon -->
+                        <i
+                          *ngIf="card.back_thumbnail && editCardId == card.id"
+                          (click)="changeImage(i, 'back')"
+                          class="fas fa-pen edit_icon"
+                        ></i>
+                      </div>
+                    </div>
+                    <div class="col-sm-8 form-template">
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <div class="form-group selector">
+                            <label for="sel1">Category: </label>
+                            <span
+                              class="font-bold"
+                              *ngIf="editCardId !== card.id"
+                            >
+                              {{ card.category_label }}
+                            </span>
+                            <select
+                              [(ngModel)]="card.category"
+                              *ngIf="editCardId == card.id"
+                              class="form-control"
+                            >
+                              <option disabled value="null">
+                                Please select
+                              </option>
+                              <option
+                                *ngFor="let item of dropdownList?.category"
+                                value="{{ item.id }}"
+                              >
+                                {{ item.category_name }}
+                              </option>
+                            </select>
+                            <i
+                              class="fa fa-chevron-down"
+                              *ngIf="editCardId == card.id"
+                            ></i>
+                          </div>
+                        </div>
+                        <div class="col-sm-6"></div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label for="exampleInputEmail1">Year: </label>
+                            <span
+                              *ngIf="editCardId != card.id"
+                              class="font-bold"
+                            >
+                              {{ card.year }}
+                            </span>
+                            <select
+                              *ngIf="editCardId == card.id"
+                              class="form-control"
+                              [(ngModel)]="card.year"
+                            >
+                              <option disabled value="null">
+                                Please select
+                              </option>
+                              <option
+                                *ngFor="let year of years"
+                                value="{{ year }}"
+                              >
+                                {{ year }}
+                              </option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label for="exampleInputEmail1">Brand Name: </label>
+                            <span
+                              *ngIf="editCardId !== card.id"
+                              class="font-bold"
+                            >
+                              {{ card.brand_name }}
+                            </span>
+                            <input
+                              *ngIf="editCardId == card.id"
+                              type="text"
+                              class="form-control"
+                              id="exampleInputEmail1"
+                              aria-describedby="emailHelp"
+                              placeholder="Enter Brand Name"
+                              [(ngModel)]="card.brand_name"
+                            />
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label for="exampleInputEmail1"
+                              >Player Name:
+                            </label>
+                            <span
+                              class="font-bold"
+                              *ngIf="editCardId !== card.id"
+                            >
+                              {{ card.player_name }}
+                            </span>
+                            <input
+                              *ngIf="editCardId == card.id"
+                              type="email"
+                              class="form-control"
+                              id="exampleInputEmail1"
+                              aria-describedby="emailHelp"
+                              placeholder="Enter Player Name"
+                              [(ngModel)]="card.player_name"
+                            />
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label for="exampleInputEmail1"
+                              >Card Number:
+                            </label>
+                            <span
+                              class="font-bold"
+                              *ngIf="editCardId !== card.id"
+                            >
+                              {{ card.card_number }}
+                            </span>
+                            <input
+                              *ngIf="editCardId == card.id"
+                              type="email"
+                              class="form-control"
+                              id="exampleInputEmail1"
+                              aria-describedby="emailHelp"
+                              placeholder="Enter Card Number"
+                              [(ngModel)]="card.card_number"
+                            />
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group selector">
+                            <label for="sel1">Certification: </label>
+                            <span
+                              class="font-bold"
+                              *ngIf="editCardId !== card.id"
+                            >
+                              {{ card.certification_label }}
+                            </span>
+                            <select
+                              *ngIf="editCardId == card.id"
+                              class="form-control"
+                              [(ngModel)]="card.certification"
+                            >
+                              <option disabled value="null">
+                                Please select
+                              </option>
+                              <option
+                                *ngFor="let item of dropdownList?.certification"
+                                value="{{ item.id }}"
+                              >
+                                {{ item.certificate_name }}
+                              </option>
+                            </select>
+                            <i
+                              *ngIf="editCardId == card.id"
+                              class="fa fa-chevron-down"
+                            ></i>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group selector">
+                            <label for="sel1">Card Grade: </label>
+                            <span
+                              class="font-bold"
+                              *ngIf="editCardId !== card.id"
+                            >
+                              {{ card.card_grade_label }}
+                            </span>
+                            <select
+                              *ngIf="editCardId == card.id"
+                              class="form-control"
+                              [(ngModel)]="card.card_grade"
+                            >
+                              <option disabled value="null">
+                                Please select
+                              </option>
+                              <option
+                                *ngFor="let item of dropdownList?.card_grade"
+                                value="{{ item.id }}"
+                              >
+                                {{ item.card_grade_name }}
+                              </option>
+                            </select>
+                            <i
+                              class="fa fa-chevron-down"
+                              *ngIf="editCardId == card.id"
+                            ></i>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label for="exampleInputEmail1"
+                              >Certification Number:
+                            </label>
+                            <span
+                              class="font-bold"
+                              *ngIf="editCardId !== card.id"
+                            >
+                              {{ card.certification_number }}
+                            </span>
+                            <input
+                              *ngIf="editCardId == card.id"
+                              type="email"
+                              class="form-control"
+                              id="exampleInputEmail1"
+                              aria-describedby="emailHelp"
+                              placeholder="Enter Certification Number"
+                              [(ngModel)]="card.certification_number"
+                            />
+                          </div>
+                        </div>
+                        <div class="col-sm-6"></div>
+
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label>Autographed: </label>
+                            <span
+                              class="font-bold"
+                              *ngIf="editCardId !== card.id"
+                            >
+                              {{ card.autographed ? "YES" : "NO" }}
+                            </span>
+                            <div
+                              class="row check-box"
+                              *ngIf="editCardId == card.id"
+                            >
+                              <div class="form-check-inline">
+                                <label class="form-check-label">
+                                  <input
+                                    type="checkbox"
+                                    class="form-check-input"
+                                    value=""
+                                    [checked]="card.autographed"
+                                    (click)="card.autographed = true"
                                   />
-                                Yes
-                              </label>
-                            </div>
-                            <div class="form-check-inline">
-                              <label class="form-check-label">
-                                <input
-                                  type="checkbox"
-                                  class="form-check-input"
-                                  value=""
-                                  [checked]="!card.autographed"
-                                  (click)="card.autographed = null"
+                                  Yes
+                                </label>
+                              </div>
+                              <div class="form-check-inline">
+                                <label class="form-check-label">
+                                  <input
+                                    type="checkbox"
+                                    class="form-check-input"
+                                    value=""
+                                    [checked]="!card.autographed"
+                                    (click)="card.autographed = null"
                                   />
-                                No
-                              </label>
+                                  No
+                                </label>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="form-group selector">
-                          <label for="sel1">Auto Grade: </label>
-                          <span class="font-bold" *ngIf="editCardId !== card.id" > {{card.auto_grade_label}} </span>
-                          <select class="form-control" *ngIf="editCardId == card.id" [(ngModel)]="card.auto_grade" >
-                            <option disabled value="null">Please select</option>
-                            <option *ngFor="let item of dropdownList?.auto_grade" value="{{item.id}}"> {{item.grade_name}} </option>
-                          </select>
-                          <i class="fa fa-chevron-down" *ngIf="editCardId == card.id"></i>
+                        <div class="col-sm-6">
+                          <div class="form-group selector">
+                            <label for="sel1">Auto Grade: </label>
+                            <span
+                              class="font-bold"
+                              *ngIf="editCardId !== card.id"
+                            >
+                              {{ card.auto_grade_label }}
+                            </span>
+                            <select
+                              class="form-control"
+                              *ngIf="editCardId == card.id"
+                              [(ngModel)]="card.auto_grade"
+                            >
+                              <option disabled value="null">
+                                Please select
+                              </option>
+                              <option
+                                *ngFor="let item of dropdownList?.auto_grade"
+                                value="{{ item.id }}"
+                              >
+                                {{ item.grade_name }}
+                              </option>
+                            </select>
+                            <i
+                              class="fa fa-chevron-down"
+                              *ngIf="editCardId == card.id"
+                            ></i>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="row submit">
-                      <button
-                        class="btn button_disabled"
-                        [disabled]="
+                  <div class="row submit">
+                    <button
+                      class="btn button_disabled"
+                      [disabled]="
                         !card.certification_number ||
                         !card.card_grade ||
                         !card.certification ||
@@ -270,28 +435,29 @@
                         !card.player_name ||
                         !card.brand_name ||
                         !card.year ||
-                        !card.category"
-                        (click)="updateCardData(i)"
-                        *ngIf="editCardId == card.id"
-                        >
-                        Submit
-                      </button>
-                      <button
+                        !card.category
+                      "
+                      (click)="updateCardData(i)"
+                      *ngIf="editCardId == card.id"
+                    >
+                      Submit
+                    </button>
+                    <button
                       class="btn button_disabled"
                       (click)="editCardId = card.id"
                       *ngIf="editCardId !== card.id"
-                      >
+                    >
                       Edit Card
                     </button>
-                </div>
+                  </div>
 
-                <div class="col-sm-1"></div>
-              </ng-template>
-            </mat-expansion-panel>
-          </mat-accordion>
+                  <div class="col-sm-1"></div>
+                </ng-template>
+              </mat-expansion-panel>
+            </mat-accordion>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 </div>

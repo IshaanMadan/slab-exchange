@@ -343,7 +343,7 @@ export class DataService {
           data.reset();
           // const errMessage = 'Something Went Wrong';
           this.toastError(error?.error.message);
-          this.router.navigate(['/']);
+          // this.router.navigate(['/']);
           return throwError(error?.error.message);
         })
       );

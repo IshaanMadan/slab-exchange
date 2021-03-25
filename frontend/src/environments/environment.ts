@@ -8,7 +8,7 @@ export const environment = {
   GOOGLE_APP_ID:'780526202298-5j20bett8p44ld8sktau286pejdu9ita.apps.googleusercontent.com',
   apiUrl: 'https://backend.sandlot.cards'
   // Local URL
-  // apiUrl: 'https://9978338d2a95.ngrok.io'
+  // apiUrl: 'https://be08b4ad0707.ngrok.io'
 };
 
 /*

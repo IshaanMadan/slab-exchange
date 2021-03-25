@@ -17,13 +17,14 @@ import { HeaderComponent } from './layout/header/header.component';
 import { SidebarComponent } from './layout/sidebar/sidebar.component';
 import { CollectionsComponent } from './collections/collections.component';
 import { VerifyUserComponent } from './verify-user/verify-user.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
 // Material Components
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatInputModule} from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
-import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { CrystalLightboxModule } from '@crystalui/angular-lightbox';
 
 
 @NgModule({
@@ -48,7 +49,8 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
     MatExpansionModule,
     MatButtonModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    CrystalLightboxModule,
   ],
   providers: [
     {
